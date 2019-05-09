@@ -86,3 +86,23 @@ novo “trunk2”
 * **padL** foi renomeada para **PadRight**; **padR** foi renomeada para **PadLeft**; **padC** foi renomeada para **PadCenter**; **padS** foi renomeada para **PadSpace**.
   * **Motivo:** Os métodos padL e padR, tiveram a sua nomenclatura errada desde a sua primeira versão (eles fazem o oposto do que o nome deles diz). E a mudança de nome é uma maneira de forçar a revisão das Units que utilizam os mesmos. Para corrigir seus fontes, use o recurso da IDE, “Find in Files” que permite localizar e substituir de forma automática todas as ocorrências desses métodos. Use por exemplo: Localizar: “padL(“ Substituir por: “PadRight(“.
 * O método **Poem_Zeros** ganhou uma sobrecarga que permite receber um Inteiro como parâmetro.
+* **FloatToString** foi aprimorado: Converte um Double para String, semelhante a FloatToStr(), porém garante que não haverá separador de Milhar e o Separador Decimal será igual a "SeparadorDecimal" informado ( o default é .(ponto)).
+* Novo método: **FormatFloatBr**: Faz o mesmo que FormatFloat, porém garante que o resultado final terá o separador de decimal = ',' e o separador de milhar como Ponto
+* Novos métodos: **FormatDateBr** e **FormatDateTimeBr**: Que garantem que o separador de data utilizado no resultado final, será a “/” e o da hora “:”
+* Novo método: **FloatMask** que retorna uma máscara baseada no número de decimais informado.
+* Os seguintes métodos foram migrados de **ACBrDFeUtil.pas**: EstaVazio, NaoEstaVazio, EstaZerado, NaoEstaZerado, TamanhoIgual, TamanhoMenor
+* Adicionado o método **ApplicationPath**: que retorna o Path da aplicação.
+* Adicionado os métodos: UnZip(S: TStream) e UnZip(S: AnsiString)
+* Método **StoD** refatorado para melhor performance
+* Adicionado o método: **TranslateUnprintable** que permite traduzir em arquivos de Log caracteres de controle.
+* Método: **IsNumber** renomeado para **VarIsNumber**, para tornar mais clara a finalidade do mesmo.
+
+## Mudanças em ACBr.inc
+* Removidas as diretivas: ACBrNFeOpenSSL, ACBrCTeOpenSSL, ACBrNFSeOpenSSL, ACBrMDFeOpenSSL, ACBrGNREOpenSSL.
+  * **Motivo**: No Trunk2 não mais são necessárias diretivas de compilação para mudar de Capicom para OpenSSL. Isso poderá ser feito em RunTime, apenas modificando uma propriedade de qualquer um dos componentes ACBrDFe.
+
+* Introduzida a diretiva HAS_FORMATSETTINGS, que será ligada quando a IDE suportar o uso de TformatSettings. 
+* Introduzida a diretiva USE_libeay32, que será ligada quando a IDE suportar o uso dessa Unit (apenas Delphi)
+
+## Mudanças em ACBrBase.pas
+* Revisão de métodos, usando “String” em vez de “AnsiString”, sempre que possível
