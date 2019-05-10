@@ -106,3 +106,8 @@ novo “trunk2”
 
 ## Mudanças em ACBrBase.pas
 * Revisão de métodos, usando “String” em vez de “AnsiString”, sempre que possível
+## Mudanças em ACBrReg.pas
+* Criação de Tipos genéricos que podem ser utilizados em vários dos componentes ACBr. Isso evita ter que redeclarar os mesmos tipos nas Units de registro, de diversos componentes.
+  * **TACBrFileProperty**: Utilizado quando o componente precisa de um OpenFileDialog
+  * **TACBrFileINIProperty**: Utilizado quando o componente precisa de um OpenFileDialog com filtro para arquivos .INI
+  * **TACBrDirProperty**: Utilizado em propriedades de componentes que precisam de um OpenDirDialog
