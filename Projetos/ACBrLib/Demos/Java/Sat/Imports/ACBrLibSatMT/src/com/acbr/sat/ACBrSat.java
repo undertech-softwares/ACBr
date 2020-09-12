@@ -38,7 +38,7 @@ public final class ACBrSat extends ACBrLibBase implements AutoCloseable {
         }
 
     int SAT_Inicializar(PointerByReference libHandler, String eArqConfig, String eChaveCrypt);
-
+    
     int SAT_Finalizar(Pointer libHandler);
 
     int SAT_Nome(Pointer libHandler, ByteBuffer buffer, IntByReference bufferSize);
@@ -47,6 +47,10 @@ public final class ACBrSat extends ACBrLibBase implements AutoCloseable {
 
     int SAT_UltimoRetorno(Pointer libHandler, ByteBuffer buffer, IntByReference bufferSize);
 
+    int SAT_ConfigImportar(Pointer libHandler, String eArqConfig);
+        
+    int SAT_ConfigExportar(Pointer libHandler, ByteBuffer buffer, IntByReference bufferSize);
+    
     int SAT_ConfigLer(Pointer libHandler, String eArqConfig);
 
     int SAT_ConfigGravar(Pointer libHandler, String eArqConfig);
@@ -59,6 +63,8 @@ public final class ACBrSat extends ACBrLibBase implements AutoCloseable {
 
     int SAT_DesInicializar(Pointer libHandler);
 
+    int SAT_AtivarSAT(Pointer libHandler, String CNPJValue, Integer cUF, ByteBuffer buffer, IntByReference bufferSize);
+    
     int SAT_AssociarAssinatura(Pointer libHandler, String CNPJValue, String assinaturaCNPJs, ByteBuffer buffer, IntByReference bufferSize);
 
     int SAT_BloquearSAT(Pointer libHandler, ByteBuffer buffer, IntByReference bufferSize);
@@ -197,6 +203,15 @@ public final class ACBrSat extends ACBrLibBase implements AutoCloseable {
         checkResult(ret);
     }
     
+    public String ativarSAT(String CNPJValue, Integer cUF) throws Exception {
+        ByteBuffer buffer = ByteBuffer.allocate(STR_BUFFER_LEN);
+        IntByReference bufferLen = new IntByReference(STR_BUFFER_LEN);          
+        
+        int ret = ACBrSatLib.INSTANCE.SAT_AtivarSAT(getHandle(), toUTF8(CNPJValue), cUF, buffer, bufferLen);
+        checkResult(ret);
+        return processResult(buffer, bufferLen);
+    }
+   
     public String associarAssinatura(String CNPJValue, String assinaturaCNPJs) throws Exception {
         ByteBuffer buffer = ByteBuffer.allocate(STR_BUFFER_LEN);
         IntByReference bufferLen = new IntByReference(STR_BUFFER_LEN);          
@@ -382,6 +397,25 @@ public final class ACBrSat extends ACBrLibBase implements AutoCloseable {
         int ret = ACBrSatLib.INSTANCE.SAT_EnviarEmail(getHandle(), toUTF8(eArquivoXml), toUTF8(ePara), toUTF8(eAssunto),
                 toUTF8(eNomeArquivo), toUTF8(sMensagem), toUTF8(sCC), toUTF8(eAnexos));
         checkResult(ret);
+    }
+    
+    public void ConfigImportar(String eArqConfig) throws Exception {
+        
+        int ret = ACBrSatLib.INSTANCE.SAT_ConfigImportar(getHandle(), eArqConfig);
+        checkResult(ret);
+        
+    }
+    
+    public String ConfigExportar() throws Exception {
+		
+        ByteBuffer buffer = ByteBuffer.allocate(STR_BUFFER_LEN);
+        IntByReference bufferLen = new IntByReference(STR_BUFFER_LEN);
+
+        int ret = ACBrSatLib.INSTANCE.SAT_ConfigExportar(getHandle(),buffer, bufferLen);
+        checkResult(ret);
+
+        return fromUTF8(buffer, bufferLen.getValue());
+		
     }
     
     @Override

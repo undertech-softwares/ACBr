@@ -54,7 +54,8 @@ exports
   SAT_Nome,
   SAT_Versao,
   SAT_UltimoRetorno,
-  SAT_ImportarConfig,
+  SAT_ConfigImportar,
+  SAT_ConfigExportar,
   SAT_ConfigLer,
   SAT_ConfigGravar,
   SAT_ConfigLerValor,
@@ -63,6 +64,7 @@ exports
   SAT_InicializarSAT,
   SAT_DesInicializar,
 
+  SAT_AtivarSAT,
   SAT_AssociarAssinatura,
   SAT_BloquearSAT,
   SAT_DesbloquearSAT,

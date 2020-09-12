@@ -901,6 +901,15 @@ begin
     Texto := StringReplace(Texto, 'dsf:enviar', 'dsf:testeEnviar', [rfReplaceAll]);
 
   FPEnvelopeSoap := Texto;
+
+  if (FPConfiguracoesNFSe.Geral.Provedor = proCenti) and
+     (FPConfiguracoesNFSe.Geral.CodigoMunicipio = 5218805 {Rio Verde-GO}) then
+  begin
+    FPMimeType := 'application/json';
+    DadosMsg := StringReplace(FPDadosMsg, '"', '''', [rfReplaceAll]);
+    FPEnvelopeSoap := Format('{"xml": "%s", "usuario": "%s", "senha": "%s"}',
+     [DadosMsg, FPConfiguracoesNFSe.Geral.UserWeb, FPConfiguracoesNFSe.Geral.SenhaWeb]);
+  end;
 end;
 
 procedure TNFSeWebService.InicializarServico;
@@ -1311,6 +1320,9 @@ begin
     }
     if (FProvedor = proIPM) then
     begin
+      if (FNotasFiscais.Count = 0) then
+        FNotasFiscais.Add;
+
       FNotasFiscais.Items[0].NFSe.Autenticador      := FRetornoNFSe.ListaNFSe.CompNFSe.Items[0].NFSe.Autenticador;
       FNotasFiscais.Items[0].NFSe.Link              := FRetornoNFSe.ListaNFSe.CompNFSe.Items[0].NFSe.Link;
       FNotasFiscais.Items[0].NFSe.Numero            := FRetornoNFSe.ListaNFSe.CompNFSe.Items[0].NFSe.Numero;

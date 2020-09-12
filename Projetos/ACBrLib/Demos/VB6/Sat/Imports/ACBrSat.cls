@@ -33,6 +33,13 @@ Private Declare Function SAT_UltimoRetorno _
                 Lib "ACBrSAT32.dll" (ByVal buffer As String, _
                                       ByRef bufferLen As Long) As Long
                    
+Private Declare Function SAT_ConfigImportar _
+                Lib "ACBrSAT32.dll" (ByVal eArqConfig As String) As Long
+                   
+Private Declare Function SAT_ConfigExportar _
+                Lib "ACBrSAT32.dll" (ByVal buffer As String, _
+                                     ByRef bufferLen As Long) As Long
+
 Private Declare Function SAT_ConfigLer _
                 Lib "ACBrSAT32.dll" (ByVal eArqConfig As String) As Long
 
@@ -53,6 +60,12 @@ Private Declare Function SAT_ConfigGravarValor _
 Private Declare Function SAT_InicializarSAT Lib "ACBrSAT32.dll" () As Long
 
 Private Declare Function SAT_DesInicializar Lib "ACBrSAT32.dll" () As Long
+
+Private Declare Function SAT_AtivarSAT _
+                Lib "ACBrSAT32.dll" (ByVal CNPJValue As String, _
+                                      ByVal cUF As Long, _
+                                      ByVal buffer As String, _
+                                      ByRef bufferLen As Long) As Long
 
 Private Declare Function SAT_AssociarAssinatura _
                 Lib "ACBrSAT32.dll" (ByVal CNPJValue As String, _
@@ -182,6 +195,32 @@ Public Sub FinalizarLib()
     CheckResult (retorno)
 End Sub
 
+Public Sub ConfigImportar(ByVal eArqConfig As String)
+
+    Dim retorno As Long
+
+    retorno = SAT_ConfigImportar(eArqConfig)
+    CheckResult (retorno)
+    
+End Sub
+    
+Public Function ConfigExportar() As String
+
+    Dim retorno   As Long
+    Dim buffer    As String
+    Dim bufferLen As Long
+
+    bufferLen = BUFFER_LENGTH
+    
+    buffer = String$(bufferLen, " ")
+    
+    retorno = SAT_ConfigExportar(buffer, bufferLen)
+    CheckResult retorno
+    
+    ConfigExportar = processResult(buffer, bufferLen)
+    
+End Function
+
 Public Sub ConfigLer(Optional eArqConfig As String = "")
 
     Dim retorno As Long
@@ -269,6 +308,22 @@ Public Sub DesInicializar()
     retorno = SAT_DesInicializar()
     CheckResult (retorno)
 End Sub
+
+Public Function AtivarSAT(ByVal CNPJValue As String, ByVal cUF As Long) As String
+
+    Dim retorno   As Long
+    Dim buffer    As String
+    Dim bufferLen As Long
+
+    bufferLen = BUFFER_LENGTH
+    
+    buffer = String$(bufferLen, " ")
+    
+    retorno = SAT_AtivarSAT(CNPJValue, cUF, buffer, bufferLen)
+    CheckResult (retorno)
+    
+    AtivarSAT = processResult(buffer, bufferLen)
+End Function
 
 Public Function AssociarAssinatura(ByVal CNPJValue As String, ByVal assinaturaCNPJs As String) As String
 

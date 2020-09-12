@@ -52,8 +52,10 @@ function SAT_Versao(const sVersao: PChar; var esTamanho: longint): longint;
     {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
 function SAT_UltimoRetorno(const sMensagem: PChar; var esTamanho: longint): longint;
     {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
-function SAT_ImportarConfig(const eArqConfig: PChar): longint;
-    {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
+function SAT_ConfigImportar(const eArqConfig: PChar): longint;
+  {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
+function SAT_ConfigExportar(const sMensagem: PChar; var esTamanho: longint): longint;
+      {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
 function SAT_ConfigLer(const eArqConfig: PChar): longint;
     {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
 function SAT_ConfigGravar(const eArqConfig: PChar): longint;
@@ -71,6 +73,8 @@ function SAT_DesInicializar: longint;{$IfDef STDCALL} stdcall{$Else} cdecl{$EndI
 {%endregion}
 
 {%region Funções SAT}
+function SAT_AtivarSAT(CNPJvalue: PChar; cUF: longint;
+  const sResposta: PChar; var esTamanho: longint): longint;
 function SAT_AssociarAssinatura(CNPJvalue, assinaturaCNPJs: PChar;
   const sResposta: PChar; var esTamanho: longint): longint;
 {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
@@ -173,10 +177,16 @@ begin
   Result := LIB_UltimoRetorno(pLib, sMensagem, esTamanho);
 end;
 
-function SAT_ImportarConfig(const eArqConfig: PChar): longint;
+function SAT_ConfigImportar(const eArqConfig: PChar): longint;
   {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
 begin
-  Result := LIB_ImportarConfig(pLib, eArqConfig);
+  Result := LIB_ConfigImportar(pLib, eArqConfig);
+end;
+
+function SAT_ConfigExportar(const sMensagem: PChar; var esTamanho: longint): longint;
+      {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
+begin
+  Result := LIB_ConfigExportar(pLib, sMensagem, esTamanho);
 end;
 
 function SAT_ConfigLer(const eArqConfig: PChar): longint;
@@ -237,6 +247,22 @@ end;
 {%endregion}
 
 {%region Funções SAT}
+function SAT_AtivarSAT(CNPJvalue: PChar; cUF: longint;
+  const sResposta: PChar; var esTamanho: longint): longint;
+{$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};
+begin
+  try
+    VerificarLibInicializada(pLib);
+    Result := TACBrLibSAT(pLib^.Lib).AtivarSAT(CNPJvalue, cUF, sResposta, esTamanho);
+  except
+    on E: EACBrLibException do
+      Result := E.Erro;
+
+    on E: Exception do
+      Result := ErrExecutandoMetodo;
+  end;
+end;
+
 function SAT_AssociarAssinatura(CNPJvalue, assinaturaCNPJs: PChar;
   const sResposta: PChar; var esTamanho: longint): longint;
 {$IfDef STDCALL} stdcall{$Else} cdecl{$EndIf};

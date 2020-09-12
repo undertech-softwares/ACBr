@@ -28,6 +28,12 @@ namespace ACBrLib.Sat
             public delegate int SAT_UltimoRetorno(IntPtr handle, StringBuilder buffer, ref int bufferSize);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate int SAT_ConfigImportar(IntPtr handle, string eArqConfig);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate int SAT_ConfigExportar(IntPtr handle, StringBuilder buffer, ref int bufferSize);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate int SAT_ConfigLer(IntPtr handle, string eArqConfig);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -44,6 +50,9 @@ namespace ACBrLib.Sat
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate int SAT_DesInicializar(IntPtr handle);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate int SAT_AtivarSAT(IntPtr handle, string CNPJValue, int cUF, StringBuilder buffer, ref int bufferSize);
 
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate int SAT_AssociarAssinatura(IntPtr handle, string CNPJValue, string assinaturaCNPJs, StringBuilder buffer, ref int bufferSize);
@@ -127,8 +136,8 @@ namespace ACBrLib.Sat
         }
 
         #endregion Constructors
-		
-		#region Properties
+
+        #region Properties
 
         public string Nome
         {
@@ -224,6 +233,40 @@ namespace ACBrLib.Sat
             var ret = ExecuteMethod(() => method(libHandle));
 
             CheckResult(ret);
+        }
+
+        public void ImportarConfig(string eArqConfig = "")
+        {
+            var importarConfig = GetMethod<Delegates.SAT_ConfigImportar>();
+            var ret = ExecuteMethod(() => importarConfig(libHandle, ToUTF8(eArqConfig)));
+
+            CheckResult(ret);
+        }
+
+        public string ExportarConfig()
+        {
+            var bufferLen = BUFFER_LEN;
+            var buffer = new StringBuilder(bufferLen);
+
+            var method = GetMethod<Delegates.SAT_ConfigExportar>();
+            var ret = ExecuteMethod(() => method(libHandle, buffer, ref bufferLen));
+
+            CheckResult(ret);
+
+            return ProcessResult(buffer, bufferLen);
+        }
+
+        public string AtivarSAT(string CNPJValue, int cUF)
+        {
+            var bufferLen = BUFFER_LEN;
+            var buffer = new StringBuilder(bufferLen);
+
+            var method = GetMethod<Delegates.SAT_AtivarSAT>();
+            var ret = ExecuteMethod(() => method(libHandle, ToUTF8(CNPJValue), cUF, buffer, ref bufferLen));
+
+            CheckResult(ret);
+
+            return ProcessResult(buffer, bufferLen);
         }
 
         public string AssociarAssinatura(string CNPJValue, string assinaturaCNPJs)
@@ -501,12 +544,15 @@ namespace ACBrLib.Sat
             AddMethod<Delegates.SAT_Nome>("SAT_Nome");
             AddMethod<Delegates.SAT_Versao>("SAT_Versao");
             AddMethod<Delegates.SAT_UltimoRetorno>("SAT_UltimoRetorno");
+            AddMethod<Delegates.SAT_ConfigImportar>("SAT_ConfigImportar");
+            AddMethod<Delegates.SAT_ConfigExportar>("SAT_ConfigExportar");
             AddMethod<Delegates.SAT_ConfigLer>("SAT_ConfigLer");
             AddMethod<Delegates.SAT_ConfigGravar>("SAT_ConfigGravar");
             AddMethod<Delegates.SAT_ConfigLerValor>("SAT_ConfigLerValor");
             AddMethod<Delegates.SAT_ConfigGravarValor>("SAT_ConfigGravarValor");
             AddMethod<Delegates.SAT_InicializarSAT>("SAT_InicializarSAT");
             AddMethod<Delegates.SAT_DesInicializar>("SAT_DesInicializar");
+            AddMethod<Delegates.SAT_AtivarSAT>("SAT_AtivarSAT");
             AddMethod<Delegates.SAT_AssociarAssinatura>("SAT_AssociarAssinatura");
             AddMethod<Delegates.SAT_BloquearSAT>("SAT_BloquearSAT");
             AddMethod<Delegates.SAT_DesbloquearSAT>("SAT_DesbloquearSAT");
