@@ -689,7 +689,7 @@ begin
              Gerador.wCampoCNPJCPF('', '', Cnpj);
              Gerador.wGrupo('/CPFCNPJRemetente');
 
-             Gerador.wCampo(tcStr, '#1', 'transacao', 01, 05, 0, iif(Transacao,'true','false'), '');
+             Gerador.wCampo(tcStr, '#1', 'transacao', 01, 05, 0, LowerCase(booltostr(Transacao, True)), '');
              Gerador.wCampo(tcDat, '#1', 'dtInicio', 01, 10, 1, DataInicial, '');
              Gerador.wCampo(tcDat, '#1', 'dtFim', 01, 10, 1, DataFinal, '');
              Gerador.wCampo(tcInt, '#1', 'QtdRPS', 01, 14, 1, QtdeNotas, '');
@@ -1955,7 +1955,8 @@ begin
 
     proRecife,
     proRJ,
-    proSimplISS:
+    proSimplISS,
+    proWebISSv2:
       begin
         TagI := '<' + Prefixo3 + 'Pedido' + FNameSpaceDad + '>' +
                    '<' + Prefixo4 + 'InfPedidoCancelamento' + FaIdentificadorCanc + '>';

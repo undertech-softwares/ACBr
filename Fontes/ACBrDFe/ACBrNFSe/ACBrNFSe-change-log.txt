@@ -42,6 +42,47 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+18/09/2020
+-- ACBrNFSe/ACBrNFSeWebServices --
+[*] Alteração visando realizar o cancelamento de uma NFS-e sem a necessidade do XML da mesma.
+    Requer mais testes.
+  Por: Italo Jurisato Junior
+
+17/09/2020
+-- ACBrNFSeNotasFiscais/ACBrNFSeWebServices --
+[-] Possível correção para o Provedor Tecnos.
+  Por: Italo Jurisato Junior
+-- ACBrNFSe/ACBrNFSeWebServices --
+[-] Possível correção para o cancelamento de NFS-e - Provedor ISSDSF.
+  Por: Italo Jurisato Junior
+-- ACBrNFSeWebServices --
+[*] https://www.projetoacbr.com.br/forum/topic/59423-altera%C3%A7%C3%A3o-do-cancelamento-nfse-provedor-assessorpublico/
+  Por: Diego Reckziegel
+-- ACBrNFSeWebServices/pnfsNFSeG --
+[*] https://www.projetoacbr.com.br/forum/topic/59427-webissv2-problema-substitui%C3%A7%C3%A3o/
+  Por: Wendell Gasparoni
+-- pnfsNFSeW_ABRASFv2 --
+[*] Ajustes para gerar corretamente o XML do RPS do provedor Tecnos.
+  Por: Alexandre Storti
+
+16/09/2020
+-- pnfsNFSeW_ABRASFv1 --
+[-] Ao gerar a tag Aliquota estava multiplicando o percentual por 100.
+  Por: Italo Jurisato Junior
+
+15/09/2020
+-- Diversos --
+[*] https://www.projetoacbr.com.br/forum/topic/53642-t%C3%B3pico-exclusivo-para-troca-de-provedor-e-novas-cidades/?do=findComment&comment=389619&_rid=63
+  Por: Eder Lacerda
+
+14/09/2020
+-- pnfsEnvLoteRpsResposta --
+[*] https://www.projetoacbr.com.br/forum/topic/59347-complemento-de-exce%C3%A7%C3%A3o-de-retorno-abase/
+  Por: Farol TI
+-- pnfsNFSeR --
+[*] https://www.projetoacbr.com.br/forum/topic/59083-mudan%C3%A7a-de-provedor-de-nfs-e-para-cidade-de-farroupilhars/?do=findComment&comment=389419&_rid=63
+  Por: Tiago Tecchio
+
 11/09/2020
 -- ACBrNFSeWebServices/pnfsCancNfseResposta --
 [*] https://www.projetoacbr.com.br/forum/topic/59229-altera%C3%A7%C3%B5es-provedor-centi/
