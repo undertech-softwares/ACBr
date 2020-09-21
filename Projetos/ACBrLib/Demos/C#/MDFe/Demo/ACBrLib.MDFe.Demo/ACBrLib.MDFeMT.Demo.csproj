@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DEC71CEC-9CA9-4F8E-A150-765137FC54B3}</ProjectGuid>
+    <ProjectGuid>{5BABED85-95E6-429F-A3F3-B08FA76301F9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ACBrLib.NFe.Demo</RootNamespace>
-    <AssemblyName>ACBrLib.NFe.Demo</AssemblyName>
+    <RootNamespace>ACBrLib.MDFe.Demo</RootNamespace>
+    <AssemblyName>ACBrLib.MDFe.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -44,6 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Shared\FrmWait.cs">
+      <Link>FrmWait.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\..\..\Shared\FrmWait.Designer.cs">
+      <DependentUpon>FrmWait.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\..\..\Shared\Helpers.cs">
       <Link>Helpers.cs</Link>
     </Compile>
@@ -74,20 +81,13 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="..\..\..\Shared\FrmWait.cs">
-      <Link>FrmWait.cs</Link>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="..\..\..\Shared\FrmWait.Designer.cs">
-      <DependentUpon>FrmWait.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FrmMain.resx">
-      <DependentUpon>FrmMain.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\..\..\Shared\FrmWait.resx">
       <DependentUpon>FrmWait.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -113,11 +113,10 @@
       <Project>{9b79e20d-34e2-4442-886c-242ac657e3ac}</Project>
       <Name>ACBrLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Imports\Dinamico\ST\ACBrLib.NFe.csproj">
-      <Project>{fd128f90-7a85-4431-8853-0f7df7301e7e}</Project>
-      <Name>ACBrLib.NFe</Name>
+    <ProjectReference Include="..\..\Imports\Dinamico\MT\ACBrLib.MDFe.csproj">
+      <Project>{e9463292-54c9-4290-bf95-0f4a35025715}</Project>
+      <Name>ACBrLib.MDFe</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

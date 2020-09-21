@@ -4,36 +4,60 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DEC71CEC-9CA9-4F8E-A150-765137FC54B3}</ProjectGuid>
+    <ProjectGuid>{FD0336F0-43E7-4A41-9564-2572AF11A08D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ACBrLib.NFe.Demo</RootNamespace>
-    <AssemblyName>ACBrLib.NFe.Demo</AssemblyName>
+    <RootNamespace>ACBrLibETQ.Demo</RootNamespace>
+    <AssemblyName>ACBrLibETQ.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,26 +71,11 @@
     <Compile Include="..\..\..\Shared\Helpers.cs">
       <Link>Helpers.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared\InputBox.cs">
-      <Link>InputBox.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared\ISplash.cs">
-      <Link>ISplash.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Shared\ItemData.cs">
       <Link>ItemData.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Shared\SplashInfo.cs">
-      <Link>SplashInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared\SplashScreenManager.cs">
-      <Link>SplashScreenManager.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Shared\UIExtensions.cs">
       <Link>UIExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Shared\User32.cs">
-      <Link>User32.cs</Link>
     </Compile>
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
@@ -74,20 +83,10 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="..\..\..\Shared\FrmWait.cs">
-      <Link>FrmWait.cs</Link>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="..\..\..\Shared\FrmWait.Designer.cs">
-      <DependentUpon>FrmWait.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\..\Shared\FrmWait.resx">
-      <DependentUpon>FrmWait.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -97,6 +96,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -109,15 +109,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\acbr.bmp" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\ACBrLib.Core\ACBrLib.Core.csproj">
       <Project>{9b79e20d-34e2-4442-886c-242ac657e3ac}</Project>
       <Name>ACBrLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Imports\Dinamico\ST\ACBrLib.NFe.csproj">
-      <Project>{fd128f90-7a85-4431-8853-0f7df7301e7e}</Project>
-      <Name>ACBrLib.NFe</Name>
+    <ProjectReference Include="..\..\Imports\Dinamico\MT\ACBrLib.ETQ.csproj">
+      <Project>{8dbe4ee3-f18f-4e21-a445-f706c5d9948b}</Project>
+      <Name>ACBrLib.ETQ</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

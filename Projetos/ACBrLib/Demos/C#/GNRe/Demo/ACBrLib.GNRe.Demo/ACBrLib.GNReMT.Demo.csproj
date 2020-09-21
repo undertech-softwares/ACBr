@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DEC71CEC-9CA9-4F8E-A150-765137FC54B3}</ProjectGuid>
+    <ProjectGuid>{C4ADDF7F-2B4B-4D9A-ACC8-DD68BE3859A4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ACBrLib.NFe.Demo</RootNamespace>
-    <AssemblyName>ACBrLib.NFe.Demo</AssemblyName>
+    <RootNamespace>ACBrLib.GNRe.Demo</RootNamespace>
+    <AssemblyName>ACBrLib.GNRe.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -97,6 +97,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -113,9 +114,9 @@
       <Project>{9b79e20d-34e2-4442-886c-242ac657e3ac}</Project>
       <Name>ACBrLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Imports\Dinamico\ST\ACBrLib.NFe.csproj">
-      <Project>{fd128f90-7a85-4431-8853-0f7df7301e7e}</Project>
-      <Name>ACBrLib.NFe</Name>
+    <ProjectReference Include="..\..\Imports\Dinamico\MT\ACBrLib.GNRe.csproj">
+      <Project>{c839513c-378b-43d0-b9eb-183d5d55bec8}</Project>
+      <Name>ACBrLib.GNRe</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
