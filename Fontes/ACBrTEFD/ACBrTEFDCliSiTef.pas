@@ -170,6 +170,8 @@ type
         Moeda : Integer = 0) : Boolean; override;
      function CDP(const EntidadeCliente: string; out Resposta: string): Boolean; override;
 
+     procedure ExibirMensagemPinPad(const MsgPinPad: String); override;
+
      procedure FinalizarTransacao( Confirma : Boolean;
         DocumentoVinculado : AnsiString; ParamAdic: AnsiString = '');
 
@@ -1006,16 +1008,17 @@ begin
                      BloquearMouseTeclado(True);
                    end;
 
-                 50 :
+                 50 :  // Exibir QRCode
                    begin
-                     MensagemOperador := 'QRCODE=' + ProcessaMensagemTela( Mensagem );
-                     DoExibeMsg( opmExibirMsgOperador, MensagemOperador, (TipoCampo=584) ) ;
+                     DoExibeQRCode( ProcessaMensagemTela( Mensagem ) );
                    end;
-                 51 :
+
+                 51 :   // Remover QRCode
                    begin
-                     DoExibeMsg( opmRemoverMsgOperador, '' ) ;
+                     DoExibeQRCode( '' ) ;
                    end;
-                 52 :
+
+                 52 :   // Mensagem de rodapé QRCode
                    begin
                      Interromper := False;
                      OnAguardaResp('52', 0, Interromper);
@@ -1372,9 +1375,6 @@ function TACBrTEFDCliSiTef.CDP(const EntidadeCliente: string; out Resposta: stri
 var
   ATipo: Integer;
 begin
-  if (PinPadChaveAcesso = '') or (PinPadIdentificador = '') then
-    raise EACBrTEFDErro.Create( 'PinPadChaveAcesso e PinPadIdentificador devem ser informados' ) ;
-
   if EntidadeCliente = 'F' then
     ATipo := 1
   else if EntidadeCliente = 'J' then
@@ -1384,6 +1384,17 @@ begin
 
   Resposta := ObtemDadoPinPadDiretoEx(ATipo, PinPadChaveAcesso, PinPadIdentificador);
   Result := (Resposta <> '');
+end;
+
+procedure TACBrTEFDCliSiTef.ExibirMensagemPinPad(const MsgPinPad: String);
+var
+  Ret: Integer;
+  Erro: String;
+begin
+  Ret := DefineMensagemPermanentePinPad(MsgPinPad);
+  Erro := fSiTefAPI.TraduzirErro(Ret);
+  if (Erro <> '') then
+    raise EACBrTEFDErro.Create( ACBrStr(Erro) ) ;
 end;
 
 end.

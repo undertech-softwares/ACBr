@@ -44,6 +44,26 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+10/10/2020
+-- pcnNFeW --
+[*] Remoção da seção "CDATA" na geração da tag qrCode versão 2.00.
+[*] Inclusão de alerta para validação do NCM se tamanho informado for diferente
+    de 8 ou 2.
+[*] Remoção da validação da DI/DSI/DIRE por a regra ainda estar como implementação
+    futura e as SEFAZ aceitam tipos não validados.
+  Por: BigWings
+
+28/09/2020
+-- pcnInutNFe --
+[*] Ajuste na leitura do XML de retorno de inutilização em UTF-8 com caracteres especiais.
+    https://www.projetoacbr.com.br/forum/topic/59542-sugestão-de-melhoria-na-impressão-da-inutilização-de-nota-fiscal/
+   Por: BigWings
+
+25/09/2020
+-- ACBrNFeWebServices --
+[*] https://www.projetoacbr.com.br/forum/topic/59543-sugest%C3%A3o-de-melhoria-no-retorno-da-nfe-do-sefaz/
+   Por: Higor Craco Baltieri
+
 17/09/2020
 -- ACBrNFeNotasFiscais --
 [*] Adicionado prioridade de leitura do total ISSQNtot com nomes padrão do manual

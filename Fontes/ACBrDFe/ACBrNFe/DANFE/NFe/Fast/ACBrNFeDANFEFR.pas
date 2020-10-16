@@ -70,6 +70,7 @@ type
     function GetIncorporarBackgroundPdf: Boolean;
     function GetIncorporarFontesPdf: Boolean;
     function GetOtimizaImpressaoPdf :Boolean;
+    function GetThreadSafe: Boolean;
 
     procedure SetFastFile(const Value: String);
     procedure SetFastFileEvento(const Value: String);
@@ -82,6 +83,7 @@ type
     procedure SetIncorporarBackgroundPdf(const Value: Boolean);
     procedure SetIncorporarFontesPdf(const Value: Boolean);
     procedure SetOtimizaImpressaoPdf(const Value: Boolean);
+    procedure SetThreadSafe(const Value: Boolean);
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -113,6 +115,7 @@ type
     property BorderIcon: TBorderIcons read GetBorderIcon write SetBorderIcon;
     property ExibeCaptionButton: Boolean read GetExibeCaptionButton write SetExibeCaptionButton default False;
     property ZoomModePadrao: TfrxZoomMode read GetZoomModePadrao write SetZoomModePadrao default ZMDEFAULT;
+    property ThreadSafe: Boolean read GetThreadSafe write SetThreadSafe;
   end;
 
   {$IFDEF RTL230_UP}
@@ -148,7 +151,8 @@ type
     procedure SetIncorporarFontesPdf(const Value: Boolean);
     function GetOtimizaImpressaoPdf: Boolean;
     procedure SetOtimizaImpressaoPdf(const Value: Boolean);
-
+    function GetThreadSafe: Boolean;
+    procedure SetThreadSafe(const Value: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -177,6 +181,7 @@ type
     property IncorporarBackgroundPdf: Boolean read GetIncorporarBackgroundPdf write SetIncorporarBackgroundPdf default True;
     property IncorporarFontesPdf: Boolean read GetIncorporarFontesPdf write SetIncorporarFontesPdf default True;
     property OtimizaImpressaoPdf: Boolean read GetOtimizaImpressaoPdf write SetOtimizaImpressaoPdf default True;
+    property ThreadSafe: Boolean read GetThreadSafe write SetThreadSafe;
   end;
 
 implementation
@@ -269,6 +274,11 @@ begin
   Result := FdmDanfe.PrintOnSheet;
 end;
 
+function TACBrNFeDANFEFR.GetThreadSafe: Boolean;
+begin
+  Result := FdmDanfe.ThreadSafe;
+end;
+
 procedure TACBrNFeDANFEFR.SetBorderIcon(const Value: TBorderIcons);
 begin
   FdmDanfe.BorderIcon := Value;
@@ -322,6 +332,11 @@ end;
 procedure TACBrNFeDANFEFR.SetPrintOnSheet(const Value: Integer);
 begin
   FdmDanfe.PrintOnSheet := Value;
+end;
+
+procedure TACBrNFeDANFEFR.SetThreadSafe(const Value: Boolean);
+begin
+  FdmDanfe.ThreadSafe := Value;
 end;
 
 procedure TACBrNFeDANFEFR.ImprimirDANFE(NFE: TNFe);
@@ -447,6 +462,11 @@ begin
   Result := FdmDanfe.PrintOnSheet;
 end;
 
+function TACBrNFeDANFCEFR.GetThreadSafe: Boolean;
+begin
+  Result := FdmDanfe.ThreadSafe;
+end;
+
 procedure TACBrNFeDANFCEFR.ImprimirDANFE(NFE: TNFe);
 begin
   FdmDanfe.ImprimirDANFE(NFE);
@@ -539,6 +559,11 @@ end;
 procedure TACBrNFeDANFCEFR.SetPrintOnSheet(const Value: Integer);
 begin
   FdmDanfe.PrintOnSheet := Value;
+end;
+
+procedure TACBrNFeDANFCEFR.SetThreadSafe(const Value: Boolean);
+begin
+  FdmDanfe.ThreadSafe := Value;
 end;
 
 end.

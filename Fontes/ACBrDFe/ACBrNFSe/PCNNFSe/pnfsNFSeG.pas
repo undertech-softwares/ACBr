@@ -91,6 +91,7 @@ type
     FNomeInter: String;
 
     FCodMunicipio: Integer;
+    FCodMunicipioTOM: Integer;
     FCodigoCanc: String;
     FMotivoCanc: String;
     FIdLote: String;
@@ -200,9 +201,10 @@ type
     property IMInter: String        read FIMInter     write FIMInter;
     property NomeInter: String      read FNomeInter   write FNomeInter;
 
-    property CodMunicipio: Integer read FCodMunicipio write FCodMunicipio;
-    property CodigoCanc: String    read FCodigoCanc   write FCodigoCanc;
-    property MotivoCanc: String    read FMotivoCanc   write FMotivoCanc;
+    property CodMunicipio: Integer    read FCodMunicipio write FCodMunicipio;
+    property CodMunicipioTOM: Integer read FCodMunicipioTOM write FCodMunicipioTOM;
+    property CodigoCanc: String       read FCodigoCanc   write FCodigoCanc;
+    property MotivoCanc: String       read FMotivoCanc   write FMotivoCanc;
 
     // Layout - ISSDSF
     property VersaoXML: String            read FVersaoXML          write FVersaoXML;
@@ -408,6 +410,7 @@ begin
   case IBGE of
     4102307: Result :=  '23'; // Balsa Nova/PR
     4104501: Result :=  '50'; // Capanema/PR
+    4104451: Result :=  '51'; // Cantagalo/PR
     4104659: Result := '141'; // Carambei/PR
     4107207: Result :=  '68'; // Dois Vizinhos/PR
     4107736: Result := '140'; // Fernandes Pinheiro/PR
@@ -605,8 +608,8 @@ begin
 
     proInfisc,
     proInfiscv11: begin
-                    Gerador.Prefixo := '';
-                    Gerador.wGrupo('envioLote versao="1.0"');
+                    Gerador.Prefixo := Prefixo3;
+                    Gerador.wGrupo('envioLote versao="1.0" xmlns:ws="http://ws.pc.gif.com.br/"');
                     Gerador.wCampo(tcStr, '', 'CNPJ'   , 01, 14, 1, Cnpj, '');
                     Gerador.wCampo(tcStr, '', 'dhTrans', 01, 19, 1, FormatDateTime('yyyy-mm-dd hh:mm:ss', Now), '');
                     Gerador.ArquivoFormatoXML := Gerador.ArquivoFormatoXML + Notas;
@@ -731,6 +734,7 @@ begin
      proELv2,
      proGiss,
      proTcheInfov2,
+     proActconv204,
      proSmarAPDABRASF:
           begin
            Gerador.Prefixo := Prefixo3;
@@ -1273,6 +1277,14 @@ begin
                   Gerador.wGrupo('/ChaveRPS');
                   Gerador.wGrupo('/Detalhe');
                 end;
+    proIPM: begin
+               Gerador.wGrupo('consulta_rps');
+               Gerador.wCampo(tcStr, '', 'cidade', 01, 04, 1, CodMunicipioTOM, '');
+               Gerador.wCampo(tcStr, '', 'serie_rps', 01, 02, 1, SerieRPS, '');
+               Gerador.wCampo(tcStr, '', 'numero_rps', 01, 09, 1, NumeroRPS, '');
+               Gerador.wGrupo('/consulta_rps');
+            end
+
   else
     begin
       Gerador.Prefixo := Prefixo3;
