@@ -1945,6 +1945,7 @@ begin
                    '</' + FPrefixo4 + 'DeclaracaoPrestacaoServico>';
 
         proEL,
+        proGeisWeb,
         proGoverna: FvNotas :=  FvNotas + RPS;
 
         proCTA: FvNotas := FvNotas + '<RPS xmlns=""' +
@@ -2024,6 +2025,7 @@ begin
            proEL,
            proFISSLex,
            proGiap,
+           proDSFv2,
            proSimplISS: FTagI := '<' + FTagGrupo + '>';
 
            proCTA: FTagI := '<' + FTagGrupo + ' xmlns:ns1="http://localhost:8080/WsNFe2/lote" '+
@@ -2042,7 +2044,7 @@ begin
            proInfiscv11,
            proIPM,
            proSMARAPD,
-		   proSigISS: FTagI := '';
+           proSigISS: FTagI := '';
 
 //           proSimplISSv2: FTagI := '<' + FTagGrupo + FNameSpaceDad +
 //                                   ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+
@@ -2124,6 +2126,8 @@ begin
 
            proEL,
            proTinus,
+           proGeisWeb,
+           proDSFv2,
            proSimplISS: FTagI := '<' + FTagGrupo + '>';
 
            proSP: FTagI := '<' + FTagGrupo +
@@ -2172,6 +2176,7 @@ begin
 
            proEL,
            proTinus,
+           proDSFv2,
            proSimplISS: FTagI := '<' + FTagGrupo + '>';
 
            proSJP: FTagI := '<' + FTagGrupo + FNameSpaceDad + ' Id="consultar">';
@@ -2221,6 +2226,8 @@ begin
            proSimplISS,
            proSP, 
            proTinus,
+           proGeisWeb,
+           proDSFv2,
            proNotaBlu: FTagI := '<' + FTagGrupo + '>';
 
            proAssessorPublico,
@@ -2284,6 +2291,8 @@ begin
            proInfiscv11,
            proPronimv2,
            proTinus,
+           proGeisWeb,
+           proDSFv2,
            proSimplISS: FTagI := '<' + FTagGrupo + '>';
 
            proSP: FTagI := '<' + FTagGrupo +
@@ -2336,6 +2345,7 @@ begin
 
            proEGoverneISS,
            proTinus,
+           proDSFv2,
            proSimplISS: FTagI := '<' + FTagGrupo + '>';
 
            proAssessorPublico,
@@ -2363,6 +2373,9 @@ begin
 //           proSimplISSv2: FTagI := '<' + FTagGrupo + FNameSpaceDad +
 //                                   ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+
 //                                   ' xmlns:xsd="http://www.w3.org/2001/XMLSchema">';
+
+           proDSFv2:
+             FTagI := '<' + FTagGrupo + '>';
          else
            FTagI := '<' + FTagGrupo + FNameSpaceDad + '>';
          end;	 
@@ -2388,14 +2401,14 @@ begin
            proSMARAPD,
            proGiap,
            proIPM: FTagI := '';
-         else begin
-                FTagI := '<' + FTagGrupo + FNameSpaceDad + '>' +
-                          '<' + FPrefixo3 + 'SubstituicaoNfse>'{ +
-                           '<' + FPrefixo3 + 'Pedido>' +
-                            '<' + FPrefixo4 + 'InfPedidoCancelamento' +
-                              ifThen(FPConfiguracoesNFSe.Geral.ConfigGeral.Identificador <> '', ' ' +
-                                     FPConfiguracoesNFSe.Geral.ConfigGeral.Identificador + '="' + FURI + '"', '') + '>'};
-              end;
+
+           proDSFv2:
+             FTagI := '<' + FTagGrupo + '>';
+         else
+           begin
+             FTagI := '<' + FTagGrupo + FNameSpaceDad + '>' +
+                      '<' + FPrefixo3 + 'SubstituicaoNfse>';
+           end;
          end;
        end;
 
@@ -2421,7 +2434,7 @@ begin
            proGoverna,
            proIPM,
            proSMARAPD,
-		   proSigISS: FTagF := '';
+           proSigISS: FTagF := '';
          else
            FTagF := '</' + FTagGrupo + '>';
          end;
@@ -2577,10 +2590,10 @@ begin
       GerarException(ACBrStr('O provedor ' + FPConfiguracoesNFSe.Geral.xProvedor +
         ' necessita que a propriedade: Configuracoes.Geral.Emitente.WebFraseSecr seja informada.'));
 
-    // Agili, Agiliv2, CTA, Governa, proEGoverneISS
+    // Agili, Agiliv2, CTA, Governa, proGiap, proiiBrasilv2, proAEG
     ChaveAcessoPrefeitura := FPConfiguracoesNFSe.Geral.Emitente.WebChaveAcesso;
     if (ChaveAcessoPrefeitura = '') and
-       (Provedor in [proAgili, proAgiliv2, proCTA, proGoverna, proEgoverneISS,
+       (Provedor in [proAgili, proAgiliv2, proCTA, proGoverna,
                      proGiap, proiiBrasilv2, proAEG]) then
       GerarException(ACBrStr('O provedor ' + FPConfiguracoesNFSe.Geral.xProvedor +
         ' necessita que a propriedade: Configuracoes.Geral.Emitente.WebChaveAcesso seja informada.'));
@@ -2991,6 +3004,9 @@ begin
 
     if FProvedor in [proSMARAPD, proGiap] then
       FPDadosMsg := StringReplace(FPDadosMsg, '<?xml version="1.0" encoding="UTF-8"?>', '', [rfReplaceAll]);
+
+//    if FProvedor in [proInfiscv11] then
+//      FPDadosMsg := StringReplace(FPDadosMsg, 'envioLote', 'ws:envioLote', [rfReplaceAll]);
 
     if FPConfiguracoesNFSe.Geral.ConfigSchemas.Validar then
       FNotasFiscais.ValidarLote(FPDadosMsg,
@@ -5371,11 +5387,17 @@ begin
   // mesmo assinado da propriedade FPDadosMsg
   if (FPConfiguracoesNFSe.Geral.ConfigAssinar.Substituir) and (FPDadosMsg <> '') then
     AssinarXML(FPDadosMsg, FdocElemento, FinfElemento, 'Falha ao Assinar - Substituir NFS-e: ');
-    
-  FPDadosMsg := '<' + FPrefixo3 + 'SubstituirNfseEnvio' + FNameSpaceDad + '>' +
-                '<' + FPrefixo3 + 'SubstituicaoNfse'+ Identificador + '>' +
-                 SeparaDados(FPDadosMsg, FPrefixo3 + 'Pedido', True) +
-                 FvNotas  + FTagF;
+
+  if Provedor = proDSFv2 then
+    FPDadosMsg := '<' + FPrefixo3 + 'SubstituirNfseEnvio>' +
+                  '<' + FPrefixo3 + 'SubstituicaoNfse'+ Identificador + '>' +
+                   SeparaDados(FPDadosMsg, FPrefixo3 + 'Pedido', True) +
+                   FvNotas  + FTagF
+  else
+    FPDadosMsg := '<' + FPrefixo3 + 'SubstituirNfseEnvio' + FNameSpaceDad + '>' +
+                  '<' + FPrefixo3 + 'SubstituicaoNfse'+ Identificador + '>' +
+                   SeparaDados(FPDadosMsg, FPrefixo3 + 'Pedido', True) +
+                   FvNotas  + FTagF;
 
   if Provedor in [proWebISSv2] then
     AssinarXML(FPDadosMsg, 'SubstituirNfseEnvio', 'SubstituicaoNfse', 'Falha ao Assinar - SubstituirNfseEnvio: ');

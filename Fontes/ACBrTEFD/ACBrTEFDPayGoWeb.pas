@@ -504,6 +504,7 @@ Var
   Confirmar: Boolean;
   ulResult: LongWord;
   RespostasCanceladas, RespostasConfirmadas: TACBrTEFDRespostasPendentes;
+  I, Topo: Integer;
 begin
   ArquivosVerficar := TStringList.Create;
   RespostasCanceladas := TACBrTEFDRespostasPendentes.create(True);
@@ -515,6 +516,22 @@ begin
     { Achando Arquivos de Backup deste GP }
     ArqMask := TACBrTEFD(Owner).PathBackup + PathDelim + 'ACBr_' + Self.Name + '_*.tef';
     FindFiles(ArqMask, ArquivosVerficar, True);
+
+    { Vamos processar primeiro os CNCs e ADMs, e as Não Confirmadas }
+    I    := ArquivosVerficar.Count-1 ;
+    Topo := 0 ;
+    while I > Topo do
+    begin
+       Resp.LeArquivo( ArquivosVerficar[ I ] );
+
+       if (pos(Resp.Header, 'CNC,ADM') > 0) or (not Resp.CNFEnviado) then
+        begin
+          ArquivosVerficar.Move(I,Topo);
+          Topo := Topo + 1;
+        end
+       else
+          I := I - 1 ;
+    end;
 
     { Enviando CNF, NCN ou CNC para todos os arquivos encontrados, conforme valores da
       Propriedade "ConfirmarTransacoesPendentes" ou evento "OnAvaliarTransacaoPendente" }
@@ -555,13 +572,16 @@ begin
             if not CNC then
               Confirmar := True;  // Se não conseguiu cancelar a transação, informe que foi confirmada
           end
-          else
-            FinalizarTransacao( ulResult,
-                                IntToStr(AResposta.NumeroLoteTransacao),
-                                AResposta.Finalizacao,
-                                AResposta.NSU,
-                                AResposta.Estabelecimento,
-                                AResposta.Rede);
+
+          else if not Resp.CNFEnviado then
+          begin
+              FinalizarTransacao( ulResult,
+                                  IntToStr(AResposta.NumeroLoteTransacao),
+                                  AResposta.Finalizacao,
+                                  AResposta.NSU,
+                                  AResposta.Estabelecimento,
+                                  AResposta.Rede);
+          end;
 
           if Confirmar then
           begin

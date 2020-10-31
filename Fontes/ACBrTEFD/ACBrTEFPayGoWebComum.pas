@@ -78,7 +78,7 @@ const
    {$ENDIF}
  {$ENDIF}
 
-  CACBrTEFPGWebLibMinVersion = '0004.0000.0064.0000';
+  CACBrTEFPGWebLibMinVersion = '0004.0000.0082.0003';
 
   CSleepNothing = 300;
   CMilissegundosMensagem = 5000;  // 5 seg
@@ -1187,6 +1187,9 @@ begin
   if (fDiretorioTrabalho = '') then
     fDiretorioTrabalho := ApplicationPath + 'TEF' + PathDelim + 'PGWeb';
 
+  if not DirectoryExists(fDiretorioTrabalho) then
+    ForceDirectories(fDiretorioTrabalho);
+
   {$IfDef ANDROID}
    if (PathLib = '') then     // Try to load from "./assets/internal/" first
    begin
@@ -1197,9 +1200,6 @@ begin
   {$EndIf}
 
   LoadLibFunctions;
-
-  if not DirectoryExists(fDiretorioTrabalho) then
-    ForceDirectories(fDiretorioTrabalho);
 
   GravarLog('PW_iInit( '+fDiretorioTrabalho+' )');
   iRet := xPW_iInit(PAnsiChar(AnsiString(fDiretorioTrabalho)));
@@ -2094,16 +2094,18 @@ var
   iRet: SmallInt;
 begin
   iRet := PWRET_CANCEL;
-  ObterDigitado := (AGetData.ulTipoEntradaCartao = 1);
+  ObterDigitado := False;
 
   case AGetData.ulTipoEntradaCartao of
+    1: ObterDigitado := True;
+
     2:
     begin
       iRet := RealizarOperacaoPinPad(AGetData, ppGetCard);
       ObterDigitado := (iRet = PWRET_FALLBACK);
     end;
 
-    3:
+  else  // 0 ou 3
     begin
       iRet := RealizarOperacaoPinPad(AGetData, ppGetCard);
       ObterDigitado := (iRet = PWRET_CANCEL) or (iRet = PWRET_FALLBACK);

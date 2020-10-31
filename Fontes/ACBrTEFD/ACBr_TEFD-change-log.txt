@@ -46,6 +46,24 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+28/10/20
+-- ACBrTEFDPayGoWeb --
+[-] Correção para não enviar comando de Finalização, para uma transação que já
+    está confirmada, evitando o erro: PWRET_INVCALL
+    (por: DSA)
+
+26/10/20
+-- ACBrTEFDPayGoWeb --
+[-] Correção em "VerificarTransacoesPendentesClass", para processar primeiro,
+    as transações em aberto, ou seja, as que não receberam Confirmação
+    (por: DSA)
+
+16/10/20
+-- ACBrTEFPayGoWebComum --
+[*] Aplicado woraround, para o caso de comando PWDAT_CARDINF, a informação em
+    PW_GetData.ulTipoEntradaCartao, vir com o valor 0 (Zero)
+    (por: DSA)
+
 07/10/20
 -- ACBrPOSPGWebPrinter --
 [*] Remoção de Hints

@@ -37,6 +37,19 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+Data: 22/10/2020
+-- ACBrUtil --
+[+] Adicionado novo método, PosExA, para funcionar sem a necessidade de converter
+    AnsiStrings para Strings.
+    function PosExA(const SubStr, S: AnsiString; Offset: Integer = 1): Integer;
+    (por: DSA)
+
+-- ACBrImage --
+[-] Ajuste em "BMPMonoToRasterStr", para imagens que informam o valor de
+    "Pixel Array", inválido.
+    https://www.projetoacbr.com.br/forum/topic/59745-configuração-correta-para-impressão-de-imagem/
+    (por: DSA)
+
 Data: 22/09/2020
 -- ACBrBase --
 [+] TACBrInformacao, adicionada a propriedade: "AsBoolean"

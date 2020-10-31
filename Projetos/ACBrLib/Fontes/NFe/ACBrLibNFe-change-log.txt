@@ -42,6 +42,30 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+30/10/2020
+--- ACBrLibNFeDataModule ---
+[-] Correção do metodo ConfigurarImpressao para quando for impressão de inutilização.
+	Por: Rafael Dias
+
+29/10/2020
+--- ACBrLibNFeBase ---
+[-] Correção nos métodos de impressão de evento e inutilização para carregar o conteudo do xml quando passado o mesmo.
+	Por: Rafael Dias
+[-] Correção nos métodos de envio de email para carregar o conteudo do xml quando passado o mesmo.
+	Por: Rafael Dias
+
+21/10/2020
+--- ACBrLibNFeDataModule ---
+[-] Correção da impressão em PDF da NFCe quando setado tipo de impressão EscPos ou Fortes.
+	Por: Rafael Dias
+[-] Correção de erro na impressão EscPos.
+	Por: Rafael Dias
+
+20/10/2020
+--- ACBrLibNFeDataModule ---
+[-] Correção na geração de PDF quando é NFCe.
+    Por: Rafael Dias
+
 13/10/2020
 --- ACBrLibNFeRepostas ---
 [*] Compatibilização da seção [NFe...] no resposta de Envio Sincrono da NFe retornando apenas numero da NFe no retorno.

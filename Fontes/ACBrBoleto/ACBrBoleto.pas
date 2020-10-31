@@ -55,7 +55,8 @@ const
   CConta = 'CONTA';
   CTitulo = 'TITULO';
 
-  cACBrTipoOcorrenciaDecricao: array[0..305] of String = (
+  cACBrTipoOcorrenciaDecricao: array[0..308] of String = (
+    {Ocorrências para arquivo remessa}
     'Remessa Registrar',
     'Remessa Baixar',
     'Remessa Debitar Em Conta',
@@ -129,10 +130,14 @@ const
     'Remessa Excluir Negativacao Serasa e Baixar',
     'Remessa Pedido de negativação',
     'Remessa Excluir negativação e baixar',
-    'Remessa Excluir negativação e manter em carteira',	
+    'Remessa Excluir negativação e manter em carteira',
+    'Remessa Sustar Protesto e baixar',
+    'Remessa Sustar Protesto e manter em carteira',
+    'Remessa Resusa Alegação do Sacado',
     'Remessa Protestar Automaticamente',
     'Remessa Alteração de Status Desconto',
 
+    {Ocorrências para arquivo retorno}
     'Retorno Abatimento Cancelado',
     'Retorno Abatimento Concedido',
     'Retorno Acerto Controle Participante',
@@ -1924,25 +1929,26 @@ end;
 
 constructor TACBrCedente.Create( AOwner : TComponent );
 begin
-   inherited Create(AOwner);
+	inherited Create(AOwner);
 
-   fNomeCedente   := '';
-   fAgencia       := '';
-   fAgenciaDigito := '';
-   fConta         := '';
-   fContaDigito   := '';
-   fModalidade    := '';
-   fConvenio      := '';
-   fCNPJCPF       := '';
-   fDigitoVerificadorAgenciaConta:= '';
-   fResponEmissao := tbCliEmite;
-   fIdentDistribuicao := tbClienteDistribui;
-   fCaracTitulo   := tcSimples;
-   fTipoInscricao := pJuridica;
-   fAcbrBoleto    := TACBrBoleto(AOwner);
+	fNomeCedente   := '';
+	fAgencia       := '';
+	fAgenciaDigito := '';
+	fConta         := '';
+	fContaDigito   := '';
+	fModalidade    := '';
+	fConvenio      := '';
+	fCNPJCPF       := '';
+	fDigitoVerificadorAgenciaConta:= '';
+	fResponEmissao := tbCliEmite;
+	fIdentDistribuicao := tbClienteDistribui;
+	fCaracTitulo   := tcSimples;
+	fTipoInscricao := pJuridica;
+	fAcbrBoleto    := TACBrBoleto(AOwner);
+	fTipoDocumento := Tradicional;
 
-   fCedenteWS := TACBrCedenteWS.Create(self);
-  fCedenteWS.Name := 'CedenteWS';
+	fCedenteWS := TACBrCedenteWS.Create(self);
+	fCedenteWS.Name := 'CedenteWS';
   {$IFDEF COMPILER6_UP}
   fCedenteWS.SetSubComponent(True);
   {$ENDIF}
@@ -4630,8 +4636,15 @@ begin
         GravarIniRetornoWeb( Configuracoes.Arquivos.PathGravarRegistro , 'ret' + FormatDateTime('ddmmyyhhnn',Now) + '.txt' );
 
     Except
-      raise Exception.Create(ACBrStr('Erro: '+ IntToStr(RemessaWS.RetornoBanco.CodRetorno) + sLineBreak +
-                        RemessaWS.RetornoBanco.Msg) );
+      on E:Exception do
+      begin
+        if ( ( RemessaWS.RetornoBanco.CodRetorno = 0 ) and
+             ( Trim( RemessaWS.RetornoBanco.Msg ) = '' ) ) then
+          raise Exception.Create(ACBrStr('Erro: ' + E.Message))
+        else
+          raise Exception.Create(ACBrStr('Erro: ' + IntToStr(RemessaWS.RetornoBanco.CodRetorno) + sLineBreak +
+                                 RemessaWS.RetornoBanco.Msg + sLineBreak));
+      end;
     end;
 
   finally
@@ -4738,10 +4751,11 @@ begin
         CaracTitulo  := TACBrCaracTitulo(IniBoletos.ReadInteger(CCedente,'CaracTitulo',Integer(CaracTitulo) ));
         TipoCarteira := TACBrTipoCarteira(IniBoletos.ReadInteger(CCedente,'TipoCarteira', Integer(TipoCarteira) ));
         TipoDocumento:= TACBrTipoDocumento(IniBoletos.ReadInteger(CCedente,'TipoDocumento', Integer(TipoDocumento) ));
-
-        wLayoutBoleto:= IniBoletos.ReadInteger(CCedente,'LAYOUTBOL', Integer(Self.ACBrBoletoFC.LayOut) );
-        Self.ACBrBoletoFC.LayOut  := TACBrBolLayOut(wLayoutBoleto);
-
+        if Assigned(Self.ACBrBoletoFC) then
+        begin
+          wLayoutBoleto:= IniBoletos.ReadInteger(CCedente,'LAYOUTBOL', Integer(Self.ACBrBoletoFC.LayOut) );
+          Self.ACBrBoletoFC.LayOut  := TACBrBolLayOut(wLayoutBoleto);
+        end;
         wRespEmissao := IniBoletos.ReadInteger(CCedente,'RespEmis', Integer(ResponEmissao) );
         try
           ResponEmissao := TACBrResponEmissao( wRespEmissao );
@@ -5034,7 +5048,7 @@ procedure TACBrBoleto.GravarIniRetornoWeb(DirRetorno: string;
 var
   IniRetorno: TMemIniFile;
   wSessao: string;
-  i: integer;
+  i, j: integer;
 begin
   if EstaVazio(DirRetorno) then
     DirRetorno:= PathWithDelim(ApplicationPath);
@@ -5058,6 +5072,14 @@ begin
         IniRetorno.WriteString(wSessao, 'Cod_Retorno',ListaRetornoWeb[i].CodRetorno);
         IniRetorno.WriteString(wSessao, 'Msg_Retorno',ListaRetornoWeb[i].MsgRetorno);
         IniRetorno.WriteString(wSessao, 'Ori_Retorno',ListaRetornoWeb[i].OriRetorno);
+
+        for j:= 0 to ListaRetornoWeb[i].ListaRejeicao.Count -1 do
+        begin
+          wSessao := 'REJEICAO' + IntToStr(j + 1);
+          IniRetorno.WriteString(wSessao, 'Campo', ListaRetornoWeb[i].ListaRejeicao[j].Campo);
+          IniRetorno.WriteString(wSessao, 'Mensagem', ListaRetornoWeb[i].ListaRejeicao[j].Mensagem);
+          IniRetorno.WriteString(wSessao, 'Valor', ListaRetornoWeb[i].ListaRejeicao[j].Valor);
+        end;
 
         wSessao := 'HEADER';
         IniRetorno.WriteString(wSessao, 'Versao',ListaRetornoWeb[i].Header.Versao);
