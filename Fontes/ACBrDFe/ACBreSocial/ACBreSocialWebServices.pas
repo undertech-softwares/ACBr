@@ -30,6 +30,15 @@
 {       Rua Coronel Aureliano de Camargo, 963 - Tatuí - SP - 18270-170         }
 {******************************************************************************}
 
+{******************************************************************************
+|* Historico
+|*
+|* 27/10/2015: Jean Carlo Cantu, Tiago Ravache
+|*  - Doação do componente para o Projeto ACBr
+|* 28/08/2017: Leivio Fontenele - leivio@yahoo.com.br
+|*  - Implementação comunicação, envelope, status e retorno do componente com webservice.
+******************************************************************************}
+
 {$I ACBr.inc}
 
 unit ACBreSocialWebServices;
@@ -273,7 +282,7 @@ end;
 
 function TeSocialWebService.GerarPrefixoArquivo: String;
 begin
-  Result := 'eSocial';
+  Result := FormatDateTime('yyyymmddhhnnss', Now);
 end;
 
 function TeSocialWebService.GerarVersaoDadosSoap: String;
@@ -373,6 +382,10 @@ begin
       TpInsc := tiCPF;
 
     NrInsc := TACBreSocial(FPDFeOwner).Configuracoes.Geral.IdEmpregador;
+
+    OrgaoPublico := TACBreSocial(FPDFeOwner).Configuracoes.Geral.TipoEmpregador in [tePessoaFisica,
+                                                                                    teOrgaoPublicoExecutivoFederal, teOrgaoPublicoLegislativoFederal,
+                                                                                    teOrgaoPublicoJudiciarioFederal, teOrgaoPublicoAutonomoFederal];
   end;
 
   with FLote.IdeTransmissor do

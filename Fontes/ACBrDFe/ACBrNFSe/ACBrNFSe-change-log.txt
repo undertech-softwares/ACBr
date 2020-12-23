@@ -42,6 +42,114 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+17/12/2020
+-- pnfsNFSeW_ABRASFv2 --
+[*] Alteração visando o provedor Tecnos
+  Por: Italo Giurizzato Junior
+
+10/12/2020
+-- ACBrNFSe --
+[*] https://www.projetoacbr.com.br/forum/topic/60490-linknfse-provedor-webissv2/
+[+] Criado sobrecarga do método LinkNFSe.
+  Por: Lucio Bittes / Italo Giurizzato Junior
+-- Diversos --
+[+] https://www.projetoacbr.com.br/forum/topic/60377-linknfse-provedor-issnet/?tab=comments#comment-396883
+  Por: Lucio Bittes
+-- pnfsNFSeW_ABRASFv2 --
+[*] Alteração visando o provedor SmarAPDABRASF
+  Por: Marcelo A. Rodrigues
+
+02/12/2020
+-- pnfsNFSeR --
+[*] https://www.projetoacbr.com.br/forum/topic/60420-safeweb-problemas-ao-carregar-xml-nfse/
+  Por: M Bortolini
+
+25/11/2020
+-- pnfsNFSeR --
+[*] Ajustes na leitura do XML da NFS-e, não estava lendo as tags do grupo <ValoresServico>.
+  Por: Italo Giurizzato Junior
+
+24/11/2020
+-- pnfsNFSeR --
+[*] https://www.projetoacbr.com.br/forum/topic/60342-altera%C3%A7%C3%A3o-provedor-centi/
+  Por: Lucio LT
+-- ACBrNFSeWebServices --
+[*] Possível correção na geração do XML da NFS-e do provedor Equiplano.
+  Por: Italo Giurizzato Junior
+-- pnfsNFSeW_ABRASFv2 --
+[*] Alteração visando gerar o XML da NFS-e do provedor Sigep.
+  Por: Italo Giurizzato Junior
+
+19/11/2020
+-- pnfsConversao --
+[*] https://www.projetoacbr.com.br/forum/topic/60238-natureza-opera%C3%A7%C3%A3o-chapec%C3%B3-sc/
+  Por: João Paulo Muller
+-- pnfsNFSeR --
+[*] https://www.projetoacbr.com.br/forum/topic/60271-nfse-fintel-iss-retido-consultaimpress%C3%A3o/
+  Por: Renato Lucas Pandolfo
+
+17/11/2020
+-- ACBrNFSeWebServices --
+[*] Alteração visando gerar o XML da NFS-e do provedor Equiplano.
+  Por: Italo Giurizzato Junior
+-- ACBrNFSe/ACBrNFSeWebServices/pnfsNFSeG --
+[*] https://www.projetoacbr.com.br/forum/topic/60177-m%C3%A9todos-de-consultar-nfse-prefeitura-belem/?tab=comments#comment-395206
+  Por: Deivid de Sá Rodrigues
+-- pnfsNFSeR --
+[*] https://www.projetoacbr.com.br/forum/topic/60184-nfse-campinas-n%C3%A3o-traz-valor-do-iss-retido/
+  Por: Fellipe
+-- pnfsNFSeW_ABRASFv2 --
+[*] Removida uma condição que estava provocando erro na validação do Lote para o 
+    provedor SystemPro
+  Por: Italo Giurizzato Junior
+
+13/11/2020
+-- ACBrNFSeWebServices --
+[*] Para o provedor Giap é preciso configurar a propriedade FPAutorizationHeader com
+    o valor da propriedade WebChaveAcesso.
+  Por: Italo Giurizzato Junior
+
+11/11/2020
+-- pnfsNFSeG --
+[*] O provedor Sigep requer o grupo <credenciais> nas mensagens de dados.
+  Por: Italo Giurizzato Junior
+-- Diversos --
+[*] Alterações visando atender o provedor fintelISS.
+  Por: Italo Giurizzato Junior
+
+10/11/2020
+-- ACBrNFSeWebServices --
+[*] Incluido o enumerador do provedor DeISS para que seja gerado a terceira
+    assinatura no XML de pedido de Substituição de NFSe
+  Por: Italo Giurizzato Junior
+
+09/11/2020
+-- pnfsNFSeG --
+[*] O provedor SystemPro requer o atribuito versao.
+  Por: Italo Giurizzato Junior
+
+05/11/2020
+-- pnfsNFSeW_ABRASFv2 --
+[*] https://www.projetoacbr.com.br/forum/topic/60077-ajuste-para-gera%C3%A7%C3%A3o-do-regimeespecialtributacao-blumenau/
+  Por: João Paulo Muller
+-- pnfsNFSeW_ABRASFv2 --
+[*] https://www.projetoacbr.com.br/forum/topic/60028-deiss-indaiatubasp/
+  Por: Danny
+-- Diversos --
+[*] https://www.projetoacbr.com.br/forum/topic/60023-optante-meisimei-agili/
+  Por: Plenustech
+
+03/11/2020
+-- ACBrNFSeWebServices --
+[*] Ajustes visando o provedor Tinus
+  Por: Italo Giurizzato Junior
+-- ACBrNFSeDANFSeRLRetrato/ACBrNFSeDANFSeClass --
+[*] https://www.projetoacbr.com.br/forum/topic/60007-nfse-campinas-nova-propriedade-para-cpfcnpj-do-prestador-de-servi%C3%A7os/
+  Por: Fellipe
+-- pnfsConversao --
+[*] Novas Naturezas de Operação - Descrição.
+  Por: Léo
+
 28/10/2020
 -- Diversos --
 [+] Implementação do provedor DSFv2

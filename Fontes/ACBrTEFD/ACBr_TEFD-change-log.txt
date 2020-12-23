@@ -46,6 +46,124 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+12/12/20
+-- ACBrTEFD, ACBrTEFDClass, ACBrTEFDPayGoWeb, ACBrTEFDBanese, ACBrTEFDCliDTEF,
+   ACBrTEFDCliSiTef, ACBrTEFDTicketCar, ACBrTEFDVeSPague --
+[*] Método "CNC", assinatura modificada, inserindo novo parâmetro,
+    CodigoAutorizacaoTransacao: String, com valor Dfault = ''.
+    Function CNC(const Rede, NSU : String; const DataHoraTransacao :
+        TDateTime; const Valor : Double; CodigoAutorizacaoTransacao: String = '') : Boolean ;
+    - Se o novo parâmtro for informado, será usado no tipo:
+      013-000 Código de autorização  (TEFPayGo, TEFDial (TXT))
+
+-- ACBrTEFDClass --
+[+] Classe "TACBrTEFDReq", adicionada a propriedade: "CodigoAutorizacaoTransacao: String"
+[*] Método "TACBrTEFDReq.Clear", agora também limpa as variáveis internas
+
+-- ACBrTEFDPayGo --
+[+] Adicionada informação obrigatória de identificação na Requisição
+     733-000 Versão da interface
+
+-- ACBrTEFDPayGoWeb --
+[-] Correção no método "CNC", para informar corretamente o parâmetro "Rede" na
+    operação de Cancelamento
+[+] Ajuste para usar o novo parâmetro "CodigoAutorizacaoTransacao", quando o
+    mesmo estiver disponível
+[+] Ajuste para usar informação da Transação em memória, apenas se ela for
+    exatamente igual aos dados da transação enviada para Cancelamento por
+    parâmetros
+
+-- ACBrTEFPayGoWebComum, ACBrTEFDPayGoWeb --
+[+] Adicionada a propriedade:
+    "PerguntarCartaoDigitadoAposCancelarLeitura: Boolean; Default False"
+    - Quando a mesma for True, após o usuário Cancelar a operação de leitura do
+      Cartão, o ACBrTEFD perguntará o Cartão de forma Digitada.
+[*] Método "TACBrTEFPGWebAPI.IniciarTransacao", modificado para zerar as
+    informações de "ParametrosAdicionais", após adicionar as mesmas na transação
+    atual
+
+-- ACBrPOSPGWebAPI --
+[*] Revisão nas chamadas dos métodos da PTI_, corrigindo parâmatros de Entrada
+    para AnsiString e Word conforme assinatura dos métodos
+[-] Método "ObterEstado", melhorado para suporte a Multithread
+    (por: DSA)
+
+03/12/20
+-- ACBrPOSPGWebAPI --
+[-] Correção na assinatura do método: PTI_CheckStatus
+[-] Correção no método "ObterEstado", na leitura do Status do Terminal, para
+    Dephi 2009 e superior
+[*] Melhoria em "Inicializar", para informar a versão atual da API
+    (por: DSA)
+
+02/12/20
+-- ACBrTEFDCliDTEF --
+[+] Adicionada operação TransacaoQRCode, no metodo "Fazer Requizicao", como sendo
+    mais uma opcao de pagamento, onde o cliente podera usar varias carteiras como:
+    (Ame/MercadoPago/PicPay, etc.), apenas escaneando um Qr Code que estara
+    disponivel no balcao/caixa.
+    A Linx lançou o produto QR Linx que age como um hub de wallets (Ame/MercadoPago/PicPay, etc.)
+    centralizando todas as plataformas de meios de pagamento em uma única ferramenta.
+    Inclusive o PIX também irá utilizar essa estrutura.
+    Para o cliente utilizar esse serviço ele precisa estar credenciado com a LinxPay
+    que poderá ser solicitado através do contato comercial;
+[+] Adicionado operação "Cancelamento via QrCode", para possibilitar o cancelamento,
+    nas operações administrativas, desta nova modalidade de pagamento.
+    https://www.projetoacbr.com.br/forum/topic/59804-qr-code-clidteflinx/
+    (por: Volmir)
+
+27/11/20
+-- ACBrPOS, ACBrPOSPGWebAPI --
+[-] Correções para o correto funcionamento em Multithread
+[*] Método "DadosDaTransacaoParaTEFResp", modificado, para receber o "TerminalId"
+    procedure DadosDaTransacaoParaTEFResp(const TerminalId: String);
+[*] Propriedade "ParametrosAdicionais" modificada, para receber o "TerminalId"
+    property ParametrosAdicionais[const TerminalId: String]: TACBrPOSPGWebAPIParametros
+    - Propriedade deixou de ser Published para ser Public
+[*] Propriedade "DadosDaTransacao" modificada, para receber o "TerminalId"
+    property DadosDaTransacao[const TerminalId: String]: TACBrTEFPGWebAPIParametros
+[*] Propriedade "TEFResp" modificada, para receber o "TerminalId"
+    property TEFResp[const TerminalId: String]: TACBrPOSResp read GetTEFResp;
+    (por: DSA)
+
+23/11/20
+-- ACBrTEFPayGoRedes --
+[+] Nova Unit, para implementar uma Tabela de Redes x CNPJ, para todos os ptodutos
+    de TEF, da PayGo
+
+--ACBrTEFDPayGo --
+[*] Remoção de código fonte, referente a Tabela de Redes.
+
+-- ACBrTEFPayGoComum --
+[+] Adicionado suporte a Tabela de Redes, retornando o CNPJ da mesma, quando
+    disponível em "RedesPayGo.txt", mapeando para a propriedade:
+    TACBrTEFResp.NFCeSAT.CNPJCredenciadora
+
+-- ACBrTEFPayGoWebComum --
+[*] Propriedade "RemocaoCartaoPinPad", modificada para Default False
+    (por: DSA)
+
+21/11/20
+-- ACBrPOS, ACBrPOSPGWebAPI --
+[-] Correção para que a verificação de Transação em andamento, seja feita por
+    Terminal  (por: DSA)
+
+04/11/20
+-- ACBrTEFPayGoWebComum --
+[*] Ajuste para evitar a exibição da mensagem "RETIRE O CARTAO", ao operador,
+    quando PinPad não foi acionado.
+
+-- ACBrTEFPayGoComum --
+[+] Mapeamento de PWINFO_DEFAULTCARDPARCPAN para Resp.BIN
+    (por: DSA)
+
+03/11/20
+-- ACBrTEFDClass --
+[-] Ajuste em "CancelarTransacoesPendentesClass', para que se a resposta já tiver
+    sido cancelada em outro arquivo, adicionar a mesma na lista de respostas canceladas
+    para o correto funcionamento do evento "OnDepoisCancelarTransacoes"
+    https://www.projetoacbr.com.br/forum/topic/60052-rotina-cancelartransacoespendentesclass-retorna-lista-de-tacbrtefdrespostaspendentes-incompleta/
+
 28/10/20
 -- ACBrTEFDPayGoWeb --
 [-] Correção para não enviar comando de Finalização, para uma transação que já

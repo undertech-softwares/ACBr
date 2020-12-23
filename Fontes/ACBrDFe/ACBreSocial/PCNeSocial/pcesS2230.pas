@@ -30,6 +30,15 @@
 {       Rua Coronel Aureliano de Camargo, 963 - Tatuí - SP - 18270-170         }
 {******************************************************************************}
 
+{******************************************************************************
+|* Historico
+|*
+|* 27/10/2015: Jean Carlo Cantu, Tiago Ravache
+|*  - Doação do componente para o Projeto ACBr
+|* 28/08/2017: Leivio Fontenele - leivio@yahoo.com.br
+|*  - Implementação comunicação, envelope, status e retorno do componente com webservice.
+******************************************************************************}
+
 {$I ACBr.inc}
 
 unit pcesS2230;
@@ -478,7 +487,11 @@ begin
 
     Gerador.wCampo(tcStr, '', 'observacao', 1, 255, 0, objInfoAfast.iniAfastamento.Observacao);
 
-    if objInfoAfast.iniAfastamento.infoAtestadoInst then
+    // Critério de geração: F (Se {codMotAfast} = [01, 03, 35]); N (Nos demais casos)
+    if ((objInfoAfast.iniAfastamento.infoAtestadoInst) and
+        (objInfoAfast.iniAfastamento.codMotAfast in [mtvAcidenteDoencaTrabalho,
+                                                   mtvAcidenteDoencaNaoTrabalho,
+                             mtvLicencaMaternidadeAntecipacaoProrrogacao])) then
       GerarInfoAtestado(objInfoAfast.iniAfastamento.infoAtestado);
 
     if Assigned(objInfoAfast.iniAfastamento.infoCessao) then
@@ -508,7 +521,7 @@ begin
     Gerador.wGrupo('infoAtestado');
 
     Gerador.wCampo(tcStr, '', 'codCID',       1, 4, 0, objInfoAtestado[i].codCID);
-    Gerador.wCampo(tcInt, '', 'qtdDiasAfast', 1, 3, 1, objInfoAtestado[i].qtDiasAfast);
+    Gerador.wCampo(tcInt, '', 'qtdDiasAfast', 1, 3, 0, objInfoAtestado[i].qtDiasAfast);
 
     if objInfoAtestado[i].emitenteInst then
       GerarEmitente(objInfoAtestado[i].Emitente, teS2230);

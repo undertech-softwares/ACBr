@@ -70,6 +70,7 @@ type
 
     FPath: ansistring;
     FDelimitador: ansistring;
+    FReplaceDelimitador: Boolean;
     FTrimString: boolean;          // Retorna a string sem espaços em branco iniciais e finais
     FCurMascara: ansistring;       // Mascara para valores tipo currency
 
@@ -79,12 +80,14 @@ type
 
     function GetConteudo: TStringList;
     function GetDelimitador: ansistring;
+    function GetReplaceDelimitador: Boolean;
     function GetLinhasBuffer: integer;
     function GetTrimString: boolean;
     function GetCurMascara: ansistring;
     procedure InicializaBloco(Bloco: TACBrTXTClass);
     procedure SetArquivo(const Value: ansistring);
     procedure SetDelimitador(const Value: ansistring);
+    procedure SetReplaceDelimitador(const Value: Boolean);
     procedure SetLinhasBuffer(const Value: integer);
     procedure SetPath(const Value: ansistring);
     procedure SetTrimString(const Value: boolean);
@@ -93,12 +96,17 @@ type
     function GetOnError: TErrorEvent;
     procedure SetOnError(const Value: TErrorEvent);
 
+    function GetLayout: TADRCSTLayout;
+    procedure SetLayout(const Value: TADRCSTLayout);
+
   protected
     /// BLOCO 0
     procedure WriteRegistro0000;
+    procedure WriteRegistro0001;
 
     /// BLOCO 1
     procedure WriteRegistro1000;
+    procedure WriteRegistro1001;
 
     /// BLOCO 9
     procedure WriteRegistro9000;
@@ -122,11 +130,12 @@ type
     property Bloco_9: TBloco_9 read fBloco_9 write fBloco_9;
   published
 
-    property Layout : TADRCSTLayout read FLayout write FLayout default lyADRCST;
+    property Layout : TADRCSTLayout read GetLayout write SetLayout default lyADRCST;
     property Path: ansistring read fPath write SetPath;
     property Arquivo: ansistring read FArquivo write SetArquivo;
     property LinhasBuffer: integer read GetLinhasBuffer write SetLinhasBuffer default 1000;
     property Delimitador: ansistring read GetDelimitador write SetDelimitador;
+    property ReplaceDelimitador: Boolean  read GetReplaceDelimitador write SetReplaceDelimitador;
     property TrimString: boolean read GetTrimString write SetTrimString;
     property CurMascara: ansistring read GetCurMascara write SetCurMascara;
 
@@ -161,9 +170,11 @@ begin
   fBloco_9 := TBloco_9.Create;
 
   FPath := ExtractFilePath(ParamStr(0));
-  FDelimitador := '|';
-  FCurMascara := '#0.00';
-  FTrimString := True;
+
+  Delimitador        := '|'; //Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
+  ReplaceDelimitador := False; //Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
+  CurMascara         := '#0.00'; //Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
+  TrimString         := True; //Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
 end;
 
 destructor TACBrADRCST.Destroy;
@@ -192,6 +203,11 @@ begin
   Result := fDelimitador;
 end;
 
+function TACBrADRCST.GetLayout: TADRCSTLayout;
+begin
+  Result := FLayout;
+end;
+
 function TACBrADRCST.GetLinhasBuffer: integer;
 begin
   Result := fACBrTXT.LinhasBuffer;
@@ -200,6 +216,11 @@ end;
 function TACBrADRCST.GetOnError: TErrorEvent;
 begin
   Result := FOnError;
+end;
+
+function TACBrADRCST.GetReplaceDelimitador: Boolean;
+begin
+  Result := FReplaceDelimitador;
 end;
 
 function TACBrADRCST.GetTrimString: boolean;
@@ -218,13 +239,13 @@ begin
   fACBrTXT.NomeArquivo := FPath + FArquivo;
   {Apaga o Arquivo existente e limpa memória}
   fACBrTXT.Reset;
-  if Layout = lyADRCST  then
-  begin
-    InicializaBloco(Bloco_0);
-    InicializaBloco(Bloco_1);
-    InicializaBloco(Bloco_9);
-  end;
+  InicializaBloco(Bloco_0);
+  InicializaBloco(Bloco_1);
+  InicializaBloco(Bloco_9);
   fInicializado := True;
+
+  Bloco_1.Registro1000List.Clear;
+  Bloco_1.Registro1001List.Clear;
 end;
 
 procedure TACBrADRCST.InicializaBloco(Bloco: TACBrTXTClass);
@@ -239,12 +260,9 @@ procedure TACBrADRCST.SaveFileTXT;
 begin
   try
     IniciaGeracao;
-    if Layout = lyADRCST  then
-    begin
-      WriteBloco_0;
-      WriteBloco_1;
-      WriteBloco_9;
-    end;
+    WriteBloco_0;
+    WriteBloco_1;
+    WriteBloco_9;
   finally
     fACBrTXT.Conteudo.Clear;
     fInicializado := False;
@@ -283,6 +301,12 @@ begin
   fBloco_9.Delimitador := Value;
 end;
 
+procedure TACBrADRCST.SetLayout(const Value: TADRCSTLayout);
+begin
+  FLayout := Value;
+  fBloco_1.Layout := Value;
+end;
+
 procedure TACBrADRCST.SetLinhasBuffer(const Value: integer);
 begin
   fACBrTXT.LinhasBuffer := Value;
@@ -300,6 +324,15 @@ end;
 procedure TACBrADRCST.SetPath(const Value: ansistring);
 begin
   fPath := PathWithDelim(Value);
+end;
+
+procedure TACBrADRCST.SetReplaceDelimitador(const Value: Boolean);
+begin
+  FReplaceDelimitador := Value;
+
+  fBloco_0.ReplaceDelimitador := Value;
+  fBloco_1.ReplaceDelimitador := Value;
+  fBloco_9.ReplaceDelimitador := Value;
 end;
 
 procedure TACBrADRCST.SetTrimString(const Value: boolean);
@@ -320,7 +353,10 @@ begin
     raise Exception.Create('Métodos "IniciaGeracao" não foi executado');
 
   /// BLOCO 0
-  WriteRegistro0000;
+  if Layout = lyADRCST then
+    WriteRegistro0000
+  else
+    WriteRegistro0001;
 
   Bloco_0.WriteBuffer;
   Bloco_0.Conteudo.Clear;
@@ -329,7 +365,10 @@ end;
 
 procedure TACBrADRCST.WriteBloco_1;
 begin
-  WriteRegistro1000;
+  if Layout = lyADRCST then
+    WriteRegistro1000
+  else
+    WriteRegistro1001;
 
   Bloco_1.WriteBuffer;
   Bloco_1.Conteudo.Clear;
@@ -342,7 +381,8 @@ begin
 
 
   /// BLOCO 9
-  WriteRegistro9000;
+  if Layout = lyADRCST then
+    WriteRegistro9000;
   WriteRegistro9999;
 
   Bloco_9.WriteBuffer;
@@ -353,6 +393,11 @@ end;
 procedure TACBrADRCST.WriteRegistro0000;
 begin
   Bloco_0.WriteRegistro0000;
+end;
+
+procedure TACBrADRCST.WriteRegistro0001;
+begin
+  Bloco_0.WriteRegistro0001;
 end;
 
 procedure TACBrADRCST.WriteRegistro9000;
@@ -368,6 +413,11 @@ end;
 procedure TACBrADRCST.WriteRegistro1000;
 begin
   Bloco_1.WriteRegistro1000;
+end;
+
+procedure TACBrADRCST.WriteRegistro1001;
+begin
+  Bloco_1.WriteRegistro1001;
 end;
 
 {$IFNDEF NOGUI}

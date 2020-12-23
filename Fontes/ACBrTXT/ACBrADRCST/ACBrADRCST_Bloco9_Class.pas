@@ -86,14 +86,15 @@ begin
   with Registro9000 do
   begin
     Add(
-        LFill(REG) +
+        REG +
         lFill(REG1200_ICMSST_RECUPERAR_RESSARCIR, 9, 2) +
         lFill(REG1200_ICMSST_COMPLEMENTAR, 9, 2) +
         lFill(REG1300_ICMSST_RECUPERAR_RESSARCIR, 9, 2) +
         lFill(REG1400_ICMSST_RECUPERAR_RESSARCIR, 9, 2) +
         lFill(REG1500_ICMSST_RECUPERAR_RESSARCIR, 9, 2) +
         lFill(REG9000_FECOP_RESSARCIR, 9, 2) +
-        lFill(REG9000_FECOP_COMPLEMENTAR, 9, 2)
+        lFill(REG9000_FECOP_COMPLEMENTAR, 9, 2),
+        False
     );
   end;
 end;
@@ -106,8 +107,9 @@ begin
   begin
     LQTD_LIN := QTD_LIN + AQTD_LIN;
     Add(
-        LFill(REG)+
-        LFill(LQTD_LIN,4));
+        REG +
+        LFill(LQTD_LIN,4),
+        False);
   end;
 end;
 

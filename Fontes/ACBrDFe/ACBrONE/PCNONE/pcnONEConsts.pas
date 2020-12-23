@@ -61,6 +61,8 @@ const
   DSC_NroEixos = 'Numero de Eixos do Veiculo';
   DSC_tpDist = 'Tipo de Distribuição';
   DSC_NSUFin = 'NSU Final';
+  DSC_xREFCOMPL = 'Detalhe da Localização do Equiplamento';
+  DSC_NSULeitura = 'NSU Geral da leitura';
 
 implementation
 

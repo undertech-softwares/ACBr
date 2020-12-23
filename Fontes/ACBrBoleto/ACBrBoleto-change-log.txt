@@ -49,6 +49,42 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+18/12/2020
+
+-- ACBrBancoSafra --
+[*] Ajuste na geracao CNAB400 Header
+Adicionado Agencia e Conta conforme especificação do manual
+
+
+04/12/2020
+
+-- ACBrBancoBrasil --
+[*] Ajuste na geracao CNAB400 Registro Tipo 5 - validar qtd dias de recebimento após vencimento
+https://www.projetoacbr.com.br/forum/topic/60402-remessa-banco-do-brasil/
+
+30/11/2020
+
+-- ACBrBancoCaixa --
+[*] Ajuste na geração do campo SeuNumero na remassa CNAB400.
+https://www.projetoacbr.com.br/forum/topic/60240-problema-no-campo-identifica%C3%A7%C3%A3o-do-t%C3%ADtulo-na-empresa-da-remessa-cef/
+
+11/11/2020
+
+-- ACBrBoleto --
+[*] Ajuste na validação SET do campo Parcela e TotalParcela.
+
+28/10/2020
+
+-- ACBrBancoABCBrasil --
+[*] Adicionado campo DataMoraJuros para CNAB240.
+
+-- ACBrBancoCaixa --
+[*] Adicionado validação para leitura do código Cedente CNAB240 Layout de 7 posições.
+
+26/10/2020
+
+-- ACBrBancoCaixa --
+[*] Adicionado Instrução "03" para CNAB400
 
 22/10/2020
 

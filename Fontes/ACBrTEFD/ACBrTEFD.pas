@@ -250,7 +250,7 @@ type
         const Cheque     : String = ''; const ChequeDC  : String = '';
         const Compensacao: String = '' ) : Boolean ;
      Function CNC(const Rede, NSU : String; const DataHoraTransacao :
-        TDateTime; const Valor : Double) : Boolean ;
+        TDateTime; const Valor : Double; CodigoAutorizacaoTransacao: String = '') : Boolean ;
      procedure CNF(const Rede, NSU, Finalizacao : String;
         const DocumentoVinculado : String = '');
      procedure NCN(const Rede, NSU, Finalizacao : String;
@@ -262,6 +262,7 @@ type
      procedure CancelarTransacoesPendentes;
      procedure ConfirmarTransacoesPendentes(ApagarRespostasPendentes: Boolean = True);
      procedure ImprimirTransacoesPendentes;
+     procedure ApagarRespostasPendentes;
 
      procedure AgruparRespostasPendentes(
         var Grupo : TACBrTEFDArrayGrupoRespostasPendentes) ;
@@ -793,9 +794,10 @@ begin
 end;
 
 function TACBrTEFD.CNC(const Rede, NSU: String;
-  const DataHoraTransacao: TDateTime; const Valor: Double): Boolean;
+  const DataHoraTransacao: TDateTime; const Valor: Double;
+  CodigoAutorizacaoTransacao: String): Boolean;
 begin
-  Result := fTefClass.CNC( Rede, NSU, DataHoraTransacao, Valor);
+  Result := fTefClass.CNC( Rede, NSU, DataHoraTransacao, Valor, CodigoAutorizacaoTransacao);
 end;
 
 procedure TACBrTEFD.CNF(const Rede, NSU, Finalizacao : String;
@@ -913,7 +915,7 @@ begin
   end;
 
   if fConfirmarAntesDosComprovantes then
-    ConfirmarTransacoesPendentes(False);
+    ConfirmarTransacoesPendentes(False); //Não apaga agora, pois será usado na impressão
 
   ImpressaoOk            := False ;
   Gerencial              := False ;
@@ -1199,13 +1201,43 @@ begin
       CancelarTransacoesPendentes;
     end
     else if (not fConfirmarAntesDosComprovantes) then
-      ConfirmarTransacoesPendentes;
+      ConfirmarTransacoesPendentes
+    else
+      ApagarRespostasPendentes;
+
 
     BloquearMouseTeclado( False );
 
     if (MsgAutenticacaoAExibir <> '') then  // Tem autenticação ?
       DoExibeMsg( opmOK, MsgAutenticacaoAExibir ) ;
   end;
+
+  RespostasPendentes.Clear;
+end;
+
+procedure TACBrTEFD.ApagarRespostasPendentes;
+var
+  I : Integer;
+begin
+  fTefClass.GravaLog( 'ApagarRespostasPendentes' );
+
+  I := 0;
+  while I < RespostasPendentes.Count do
+  begin
+    try
+      with TACBrTEFDResp(RespostasPendentes[I]) do
+      begin
+        GPAtual := TipoGP;   // Seleciona a Classe do GP
+
+        ApagaEVerifica( ArqRespPendente );
+        ApagaEVerifica( ArqBackup );
+
+        Inc( I ) ;
+      end;
+    except
+      { Exceção Muda... Fica em Loop até conseguir confirmar e apagar Backup }
+    end;
+  end ;
 
   RespostasPendentes.Clear;
 end;

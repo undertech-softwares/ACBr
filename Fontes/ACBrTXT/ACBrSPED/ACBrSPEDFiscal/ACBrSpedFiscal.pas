@@ -86,6 +86,7 @@ type
 
     FPath: String;            /// Path do arquivo a ser gerado
     FDelimitador: String;     /// Caracter delimitador de campos
+    FReplaceDelimitador: Boolean;
     FTrimString: boolean;
     /// Retorna a string sem espaços em branco iniciais e finais
     FCurMascara: String;      /// Mascara para valores tipo currency
@@ -103,6 +104,7 @@ type
 
     function GetConteudo: TStringList;
     function GetDelimitador: String;
+    function GetReplaceDelimitador: Boolean;
     function GetLinhasBuffer: Integer;
     function GetTrimString: boolean;
     function GetCurMascara: String;
@@ -111,6 +113,7 @@ type
     procedure InicializaBloco(Bloco: TACBrSPED);
     procedure SetArquivo(const Value: String);
     procedure SetDelimitador(const Value: String);
+    procedure SetReplaceDelimitador(const Value: Boolean);
     procedure SetLinhasBuffer(const Value: Integer);
     procedure SetPath(const Value: String);
     procedure SetTrimString(const Value: boolean);
@@ -119,7 +122,7 @@ type
     procedure SetDT_INI(const Value: TDateTime);
 
     function GetOnError: TErrorEvent; /// Método do evento OnError
-    procedure SetOnError(const Value: TErrorEvent); /// Método SetError
+    procedure SetOnError(const Value: TErrorEvent);/// Método SetError
 
   protected
     /// BLOCO 0
@@ -196,6 +199,7 @@ type
     property LinhasBuffer : Integer read GetLinhasBuffer write SetLinhasBuffer default 1000 ;
 
     property Delimitador: String read GetDelimitador write SetDelimitador;
+    property ReplaceDelimitador: Boolean read GetReplaceDelimitador write SetReplaceDelimitador;
     property TrimString: boolean read GetTrimString write SetTrimString;
     property CurMascara: String read GetCurMascara write SetCurMascara;
 
@@ -258,15 +262,11 @@ begin
   FBloco_H.Bloco_0 := FBloco_0;
   FBloco_K.Bloco_0 := FBloco_0;
 
-  FPath := ExtractFilePath(ParamStr(0));
-  FDelimitador := '|';
-  FCurMascara := '#0.00';
-  FTrimString := True;
-
-  // Seta os valores defaults para todos os cdaBlocos
-  SetDelimitador(FDelimitador);
-  SetCurMascara(FCurMascara);
-  SetTrimString(FTrimString);
+  FPath              := ExtractFilePath(ParamStr(0));
+  Delimitador        := '|';  	  //Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
+  ReplaceDelimitador := False; 	  //Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
+  CurMascara         := '#0.00';	//Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
+  TrimString         := True;   	//Não chamamos a variável diretamente pois precisa-se alterar os registros filhos também.
 
   FEventsBloco_0 := TEventsBloco_0.Create(Self);
   FEventsBloco_0.Name := 'EventsBloco_0';
@@ -338,7 +338,7 @@ end;
 
 function TACBrSPEDFiscal.GetDelimitador: String;
 begin
-   Result := FDelimitador;
+  Result := FDelimitador;
 end;
 
 function TACBrSPEDFiscal.GetLinhasBuffer: Integer;
@@ -376,6 +376,22 @@ begin
      raise EACBrSPEDFiscalException.Create('Campo não pode ser vazio!');
 
   FPath := PathWithDelim( Value );
+end;
+
+procedure TACBrSPEDFiscal.SetReplaceDelimitador(const Value: Boolean);
+begin
+  FReplaceDelimitador := Value;
+
+  FBloco_0.ReplaceDelimitador := Value;
+  FBloco_1.ReplaceDelimitador := Value;
+  FBloco_B.ReplaceDelimitador := Value;
+  FBloco_C.ReplaceDelimitador := Value;
+  FBloco_D.ReplaceDelimitador := Value;
+  FBloco_E.ReplaceDelimitador := Value;
+  FBloco_G.ReplaceDelimitador := Value;
+  FBloco_H.ReplaceDelimitador := Value;
+  FBloco_K.ReplaceDelimitador := Value;
+  FBloco_9.ReplaceDelimitador := Value;
 end;
 
 function TACBrSPEDFiscal.GetCurMascara: String;
@@ -548,6 +564,11 @@ end;
 function TACBrSPEDFiscal.GetOnError: TErrorEvent;
 begin
   Result := FOnError;
+end;
+
+function TACBrSPEDFiscal.GetReplaceDelimitador: Boolean;
+begin
+  Result := FReplaceDelimitador;
 end;
 
 procedure TACBrSPEDFiscal.SetOnError(const Value: TErrorEvent);
@@ -1048,6 +1069,22 @@ begin
                QTD_REG_BLC := Bloco_1.Registro1210Count;
             end;
          end;
+		 if Bloco_1.Registro1250Count > 0 then
+         begin
+            with New do
+            begin
+               REG_BLC := '1250';
+               QTD_REG_BLC := Bloco_1.Registro1250Count;
+            end;
+         end;
+		 if Bloco_1.Registro1255Count > 0 then
+         begin
+            with New do
+            begin
+               REG_BLC := '1255';
+               QTD_REG_BLC := Bloco_1.Registro1255Count;
+            end;
+         end;
          if Bloco_1.Registro1300Count > 0 then
          begin
             with New do
@@ -1514,12 +1551,28 @@ begin
            QTD_REG_BLC := Bloco_C.RegistroC180Count;
          end;
        end;
+       if Bloco_C.RegistroC181Count > 0 then
+       begin
+         with New do
+         begin
+           REG_BLC := 'C181';
+           QTD_REG_BLC := Bloco_C.RegistroC181Count;
+         end;
+       end;
        if Bloco_C.RegistroC185Count > 0 then
        begin
          with New do
          begin
            REG_BLC := 'C185';
            QTD_REG_BLC := Bloco_C.RegistroC185Count;
+         end;
+       end;
+       if Bloco_C.RegistroC186Count > 0 then
+       begin
+         with New do
+         begin
+           REG_BLC := 'C186';
+           QTD_REG_BLC := Bloco_C.RegistroC186Count;
          end;
        end;
        if Bloco_C.RegistroC190Count > 0 then

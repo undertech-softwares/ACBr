@@ -55,6 +55,7 @@ type
 
     function ConverterOrientacao(aOrientacao: TACBrETQOrientacao): String;
 
+    function ComandoTamanhoBarras( aBarraFina, aBarraLargaa , aAlturaBarra:Integer ):String;
     function ComandoCoordenadas(aVertical, aHorizontal: Integer): String;
     function ComandoReverso(aImprimirReverso: Boolean): String;
     function ComandoFonte(const aFonte: String; aMultVertical, aMultHorizontal: Integer;
@@ -112,6 +113,10 @@ type
     function ComandoCarregarImagem(aStream: TStream; aNomeImagem: String;
       aFlipped: Boolean; aTipo: String): AnsiString; override;
     function ComandoBMP2GRF(aStream: TStream; aNomeImagem: String; Inverter: Boolean = True): AnsiString;
+
+    function ComandoGravaRFIDHexaDecimal(aValue:String): AnsiString; override;
+    function ComandoGravaRFIDASCII( aValue:String ): AnsiString; override;
+
   end;
 
 implementation
@@ -179,6 +184,16 @@ begin
                    ConverterOrientacao(aOrientacao)   + ',' +
                    IntToStr(Max(aMultVertical,1))     + ',' +
                    IntToStr(Max(aMultHorizontal,1));
+end;
+
+function TACBrETQZplII.ComandoGravaRFIDASCII(aValue:String): AnsiString;
+begin
+  result := '^RFW,A^FD' + aValue + '^FS';
+end;
+
+function TACBrETQZplII.ComandoGravaRFIDHexaDecimal(aValue: String): AnsiString;
+begin
+  result := '^RFW,H^FD' + aValue+ '^FS';
 end;
 
 function TACBrETQZplII.ComandoCoordenadas(aVertical, aHorizontal: Integer
@@ -302,6 +317,11 @@ begin
   //
   //Result := '^MU'+d;
   Result := '';  // Todos os comandos são convertidos para etqDots;
+end;
+
+function TACBrETQZplII.ComandoTamanhoBarras(aBarraFina, aBarraLargaa , aAlturaBarra:Integer): String;
+begin
+  result := '^BY' + intToStr( aBarraFina )+ ',,'+ intToStr( aAlturaBarra );
 end;
 
 function TACBrETQZplII.ComandoTemperatura: AnsiString;
@@ -432,6 +452,7 @@ function TACBrETQZplII.ComandoImprimirBarras(aOrientacao: TACBrETQOrientacao;
   aExibeCodigo: TACBrETQBarraExibeCodigo): AnsiString;
 begin
   Result := ComandoCoordenadas(aVertical, aHorizontal) +
+            ComandoTamanhoBarras(aBarraFina, aBarraLarga , aAlturaBarras ) +
             ComandoBarras(aTipoBarras, aOrientacao, aAlturaBarras, aExibeCodigo ) +
             ComandoCampo(aTexto);
 end;

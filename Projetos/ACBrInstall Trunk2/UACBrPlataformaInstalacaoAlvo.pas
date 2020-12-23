@@ -34,9 +34,14 @@ unit UACBrPlataformaInstalacaoAlvo;
 
 interface
 
-uses SysUtils, Windows, Messages, Classes, Forms, System.Generics.Collections,
+uses SysUtils, StrUtils, Windows, Messages, Classes, Forms, Generics.Collections,
   JclIDEUtils, JclCompilerUtils;
 
+
+const
+  PlataformasSuportadasFull = [bpWin32, bpWin64];
+  PlataformasSuportadasBeta = [bpAndroid32, bpAndroid64, bpOSX32, bpOSX64, bpLinux64];
+  PlataformasSuportadas = PlataformasSuportadasFull + PlataformasSuportadasBeta;
 
 type
 
@@ -49,6 +54,8 @@ type
     sPlatform: string;
     sDirLibrary: string;
     function GetDirLibrary: string;
+    function EhSuportadaPeloACBr: Boolean;
+    function EhSuportadaPeloACBrBeta: Boolean;
     constructor CreateNew(AInstalacao: TJclBorRADToolInstallation; UmaPlatform: TJclBDSPlatform;
           const UmasPlatform: string);
   end;
@@ -70,6 +77,11 @@ type
 
 implementation
 
+function PossuiOutrasPlataformas(UmaInstalacao: TJclBorRADToolInstallation): Boolean;
+begin
+  Result := (UmaInstalacao is TJclBDSInstallation) and (UmaInstalacao.IDEVersionNumber >= 9) and
+            (not UmaInstalacao.IsTurboExplorer);
+end;
 
 function GeraListaPlataformasAlvos: TListaPlataformasAlvos;
 var
@@ -79,24 +91,47 @@ begin
   Result := TListaPlataformasAlvos.Create;
   for i := 0 to Result.FoACBr.Count - 1 do
   begin
-//    InstalacaoAlvo := TJclBorRADToolInstallation.Create(oACBr.Installations[i].ConfigDataLocation);
     InstalacaoAlvo := Result.FoACBr.Installations[i];
-    Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpWin32, 'Win32'));
+    Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpWin32, BDSPlatformWin32));
 
-    if (InstalacaoAlvo is TJclBDSInstallation) and (InstalacaoAlvo.IDEVersionNumber >= 9) and (not InstalacaoAlvo.IsTurboExplorer)
-      and (bpDelphi64 in InstalacaoAlvo.Personalities) then
+    if PossuiOutrasPlataformas(InstalacaoAlvo) then
     begin
-  //    InstalacaoAlvo := TJclBorRADToolInstallation.Create(oACBr.Installations[i].ConfigDataLocation);
-      InstalacaoAlvo := Result.FoACBr.Installations[i];
-      Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpWin64, 'Win64'));
-    end;
+      if (bpDelphi64 in InstalacaoAlvo.Personalities) then
+      begin
+        InstalacaoAlvo := Result.FoACBr.Installations[i];
+        Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpWin64, BDSPlatformWin64));
+      end;
 
-    if (InstalacaoAlvo is TJclBDSInstallation) and (InstalacaoAlvo.IDEVersionNumber >= 9) and (not InstalacaoAlvo.IsTurboExplorer)
-      and (bpDelphiOSX32 in InstalacaoAlvo.Personalities) then
-    begin
-  //    InstalacaoAlvo := TJclBorRADToolInstallation.Create(oACBr.Installations[i].ConfigDataLocation);
-      InstalacaoAlvo := Result.FoACBr.Installations[i];
-      Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpOSX32, 'OSX32'));
+      if (bpDelphiOSX32 in InstalacaoAlvo.Personalities) then
+      begin
+        InstalacaoAlvo := Result.FoACBr.Installations[i];
+        Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpOSX32, BDSPlatformOSX32));
+      end;
+
+      if (bpDelphiOSX64 in InstalacaoAlvo.Personalities) then
+      begin
+        InstalacaoAlvo := Result.FoACBr.Installations[i];
+        Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpOSX64, BDSPlatformOSX64));
+      end;
+
+      if (bpDelphiAndroid32 in InstalacaoAlvo.Personalities) then
+      begin
+        InstalacaoAlvo := Result.FoACBr.Installations[i];
+        Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpAndroid32, BDSPlatformAndroid32));
+      end;
+
+      if (bpDelphiAndroid64 in InstalacaoAlvo.Personalities) then
+      begin
+        InstalacaoAlvo := Result.FoACBr.Installations[i];
+        Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpAndroid64, BDSPlatformAndroid64));
+      end;
+
+      if (bpDelphiLinux64 in InstalacaoAlvo.Personalities) then
+      begin
+        InstalacaoAlvo := Result.FoACBr.Installations[i];
+        Result.Add(TACBrPlataformaInstalacaoAlvo.CreateNew(InstalacaoAlvo, bpLinux64, BDSPlatformLinux64));
+      end;
+
     end;
   end;
 
@@ -117,6 +152,18 @@ begin
 end;
 
 { TACBrPlataformaInstalacaoAlvo }
+
+function TACBrPlataformaInstalacaoAlvo.EhSuportadaPeloACBr: Boolean;
+begin
+  Result := (not MatchText(InstalacaoAtual.VersionNumberStr, ['d3', 'd4', 'd5', 'd6'])) and
+            (tPlatformAtual in PlataformasSuportadas);
+end;
+
+function TACBrPlataformaInstalacaoAlvo.EhSuportadaPeloACBrBeta: Boolean;
+begin
+  Result := (not MatchText(InstalacaoAtual.VersionNumberStr, ['d3', 'd4', 'd5', 'd6'])) and
+            (tPlatformAtual in PlataformasSuportadasBeta);
+end;
 
 function TACBrPlataformaInstalacaoAlvo.GetDirLibrary: string;
 begin

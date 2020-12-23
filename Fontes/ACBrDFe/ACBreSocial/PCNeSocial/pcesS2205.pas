@@ -30,6 +30,15 @@
 {       Rua Coronel Aureliano de Camargo, 963 - Tatuí - SP - 18270-170         }
 {******************************************************************************}
 
+{******************************************************************************
+|* Historico
+|*
+|* 27/10/2015: Jean Carlo Cantu, Tiago Ravache
+|*  - Doação do componente para o Projeto ACBr
+|* 28/08/2017: Leivio Fontenele - leivio@yahoo.com.br
+|*  - Implementação comunicação, envelope, status e retorno do componente com webservice.
+******************************************************************************}
+
 {$I ACBr.inc}
 
 unit pcesS2205;
@@ -76,6 +85,7 @@ type
   TEvtAltCadastral = class(TeSocialEvento)
   private
     FdtAlteracao: TDateTime;
+    FCodCateg: integer;
     FIdeEvento: TIdeEvento2;
     FIdeEmpregador: TIdeEmpregador;
     FTrabalhador: TTrabalhador;
@@ -91,6 +101,7 @@ type
     function LerArqIni(const AIniString: String): Boolean;
 
     property dtAlteracao: TDateTime read FdtAlteracao write FdtAlteracao;
+    property CodCateg: integer read FCodCateg write FCodCateg;
     property IdeEvento: TIdeEvento2 read FIdeEvento write FIdeEvento;
     property IdeEmpregador: TIdeEmpregador read FIdeEmpregador write FIdeEmpregador;
     property Trabalhador: TTrabalhador read FTrabalhador write FTrabalhador;
@@ -150,6 +161,7 @@ constructor TEvtAltCadastral.Create(AACBreSocial: TObject);
 begin
   inherited Create(AACBreSocial);
 
+  FCodCateg       := 0;
   FIdeEvento      := TIdeEvento2.Create;
   FIdeEmpregador  := TIdeEmpregador.Create;
   FTrabalhador    := TTrabalhador.Create;
@@ -174,7 +186,7 @@ begin
 
   Gerador.wCampo(tcDat, '', 'dtAlteracao', 10, 10, 1, self.dtAlteracao);
 
-  GerarTrabalhador(self.Trabalhador, tpSim, 'dadosTrabalhador');
+  GerarTrabalhador(self.Trabalhador, tpSim, 'dadosTrabalhador', 1, self.CodCateg);
 
   GerarModoFechamento(mlAlteracao);
 end;

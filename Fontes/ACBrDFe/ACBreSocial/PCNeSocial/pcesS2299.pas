@@ -33,6 +33,15 @@
 {       Rua Coronel Aureliano de Camargo, 963 - Tatuí - SP - 18270-170         }
 {******************************************************************************}
 
+{******************************************************************************
+|* Historico
+|*
+|* 27/10/2015: Jean Carlo Cantu, Tiago Ravache
+|*  - Doação do componente para o Projeto ACBr
+|* 28/08/2017: Leivio Fontenele - leivio@yahoo.com.br
+|*  - Implementação comunicação, envelope, status e retorno do componente com webservice.
+******************************************************************************}
+
 {$I ACBr.inc}
 
 unit pcesS2299;
@@ -146,6 +155,8 @@ type
     FtransfTit: TtransfTit;
     FQtdDiasInterm: Integer;
     FMudancaCPF: TMudancaCPF3;
+    FCodCateg: Integer;
+
     function getVerbasResc: TVerbasRescS2299;
   public
     constructor Create;
@@ -173,6 +184,7 @@ type
     property transfTit: TtransfTit read FtransfTit write FtransfTit;
     property mudancaCPF: TMudancaCPF3 read FMudancaCPF write FMudancaCPF;
     property QtdDiasInterm: Integer read FQtdDiasInterm write FQtdDiasInterm;
+    property CodCateg: Integer read FCodCateg write FCodCateg;
   end;
 
   TIdePeriodoCollection = class(TACBrObjectList)
@@ -712,15 +724,19 @@ begin
 
   Gerador.wCampo(tcStr, '', 'indCumprParc', 1,   1, 1, eSTpCumprParcialAvisoToStr(obj.indCumprParc));
 
-  If (obj.QtdDiasInterm >= 0) And (VersaoDF >= ve02_05_00) Then
-     Gerador.wCampo(tcInt, '', 'qtdDiasInterm', 1,   2, 1, obj.QtdDiasInterm);
+  //O campo é sempre obrigatório para a categoria 111 (Intermitente)
+  if (VersaoDF <> ve02_04_01) and
+     ((obj.QtdDiasInterm > 0) or (obj.CodCateg = 111))  then
+    Gerador.wCampo(tcInt, '', 'qtdDiasInterm', 1,   2, 1, obj.QtdDiasInterm);
 
   if (VersaoDF = ve02_04_01) then
     Gerador.wCampo(tcStr, '', 'observacao',   1, 255, 0, obj.Observacao)
   else
     GerarObservacoes(obj.observacoes);
+
   if (StrToIntDef(obj.mtvDeslig,0) in [11, 12, 13, 25, 28, 29, 30]) then
      GerarSucessaoVinc(obj.SucessaoVinc);
+
   if (obj.transfTit.cpfSubstituto <> '') And (obj.mtvDeslig='34') then
     GerarTransfTit(obj.transfTit);
 
@@ -1005,7 +1021,7 @@ begin
       infoDeslig.nrCertObito  := INIRec.ReadString(sSecao, 'nrCertObito', EmptyStr);
       infoDeslig.nrProcTrab   := INIRec.ReadString(sSecao, 'nrProcTrab', EmptyStr);
       infoDeslig.indCumprParc := eSStrToTpCumprParcialAviso(Ok, INIRec.ReadString(sSecao, 'indCumprParc', '0'));
-      infoDeslig.qtdDiasInterm := INIRec.ReadInteger(sSecao, 'qtdDiasInterm', 0);
+      infoDeslig.qtdDiasInterm := INIRec.ReadInteger(sSecao, 'qtdDiasInterm', -1);
       infoDeslig.Observacao   := INIRec.ReadString(sSecao, 'observacao', EmptyStr);
 
       sSecao := 'sucessaoVinc';

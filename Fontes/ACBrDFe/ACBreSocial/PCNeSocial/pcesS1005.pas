@@ -33,6 +33,15 @@
 {       Rua Coronel Aureliano de Camargo, 963 - Tatuí - SP - 18270-170         }
 {******************************************************************************}
 
+{******************************************************************************
+|* Historico
+|*
+|* 27/10/2015: Jean Carlo Cantu, Tiago Ravache
+|*  - Doação do componente para o Projeto ACBr
+|* 28/08/2017: Leivio Fontenele - leivio@yahoo.com.br
+|*  - Implementação comunicação, envelope, status e retorno do componente com webservice.
+******************************************************************************}
+
 {$I ACBr.inc}
 
 unit pcesS1005;
@@ -452,7 +461,8 @@ end;
 
 procedure TEvtTabEstab.GerarInfoCaepf;
 begin
-  if infoEstab.DadosEstab.infoCaepfInst() then
+  if infoEstab.DadosEstab.infoCaepfInst() and
+     (infoEstab.DadosEstab.infoCaepf.tpCaepf <> tcVazio) then
   begin
     Gerador.wGrupo('infoCaepf');
 
@@ -464,7 +474,8 @@ end;
 
 procedure TEvtTabEstab.GerarInfoObra;
 begin
-  if infoEstab.DadosEstab.infoObraInst() then
+  if infoEstab.DadosEstab.infoObraInst() and
+    (infoEstab.DadosEstab.InfoObra.indSubstPatrObra <> ispVazio) then
   begin
     Gerador.wGrupo('infoObra');
 

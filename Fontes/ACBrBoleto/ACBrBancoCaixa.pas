@@ -637,7 +637,7 @@ begin
          tbBancoEmite      : ATipoBoleto := '1' + '1';
          tbCliEmite        : ATipoBoleto := '2' + '0';
          tbBancoReemite    : ATipoBoleto := '4' + '1';
-         tbBancoNaoReemite : ATipoBoleto := '5' + '2';
+         tbBancoNaoReemite : ATipoBoleto := '5' + '0';
       end;
 
       {Mora Juros}
@@ -1037,7 +1037,7 @@ begin
                          ACodCedente )                                             + // 22 até 27  - Código do Cedente
                   ATipoBoleto                                                      + // 28 a 29    - Quem emite e quem distribui
                   '00'                                                             + // 30 a 31    - Comissão de permanência - informar 00
-                  PadLeft(OnlyNumber(ACBrTitulo.SeuNumero), 25)                    + // 32 até 56  - Seu numero
+                  PadRight(ACBrTitulo.SeuNumero, 25, ' ')                          + // 32 até 56  - Seu numero
                   PadRight(Copy(AModalidade,1,2), 2, '0')                          + // 57 até 58  - Modalidade identificação
                   PadLeft(Copy(ANossoNumero, 3, 15), 15, '0')                      + // 59 até 73  - Nosso Numero
                   Space(3)                                                         + // 74 Até 76  - Brancos
@@ -1075,7 +1075,7 @@ begin
                   ADataMulta                                                       + //352 até 357  - Data Multa
                   IntToStrZero(round((ValorDocumento* (PercentualMulta*100) )/100), 10)    + //358 até 367 - Valor nominal da multa
                   PadRight(Sacado.SacadoAvalista.NomeAvalista, 22)                 + // 368 até 389 - Nome do Sacador Avalista
-                  '00'                                                             + // 390  391 - Terceira instrução de Cobrança Default '00'
+                  PadLeft(Instrucao3, 2, '0')                                      + // 390  391 - Terceira instrução de Cobrança Default '00'
                    IfThen((DataProtesto > 0) and (DataProtesto > Vencimento),
                              PadLeft(IntToStr(DaysBetween(DataProtesto,Vencimento)), 2, '0'),
                           IfThen( (DataBaixa > 0) and (DataBaixa > Vencimento),
@@ -1155,8 +1155,18 @@ begin
 
    rCedente := trim(Copy(ARetorno[0],73,30));
    rAgencia := trim(Copy(ARetorno[0],53,5));
-   rConta   := trim(Copy(ARetorno[0],59,5));
-   rDigitoConta := Copy(ARetorno[0],64,1);
+
+   if (Copy(ARetorno[0],164,3) = '047') then   //Valida Layout Cedente com 7 posiçoes
+    begin
+      rConta   := trim(Copy(ARetorno[0],59,6));
+      rDigitoConta := Copy(ARetorno[0],65,1);
+    end
+    else
+    begin
+      rConta   := trim(Copy(ARetorno[0],59,5));
+      rDigitoConta := Copy(ARetorno[0],64,1);
+    end;
+
    ACBrBanco.ACBrBoleto.NumeroArquivo := StrToIntDef(Copy(ARetorno[0], 158, 6), 0);
 
    TempData := Copy(ARetorno[1],192,2) + '/' + Copy(ARetorno[1],194,2) + '/' +

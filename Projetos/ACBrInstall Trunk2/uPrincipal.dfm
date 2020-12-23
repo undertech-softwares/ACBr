@@ -1040,7 +1040,25 @@ object frmPrincipal: TfrmPrincipal
       Color = clWhite
       Caption = 'Selecione as IDEs'
       OnNextButtonClick = wizPgSelectIDEsNextButtonClick
-      object clbDelphiVersion: TCheckListBox
+      object btnMarcarTodas: TButton
+        Left = 6
+        Top = 73
+        Width = 99
+        Height = 25
+        Caption = 'Marcar Todas'
+        TabOrder = 0
+        OnClick = btnMarcarTodasClick
+      end
+      object btnDesmarcarTodas: TButton
+        Left = 118
+        Top = 73
+        Width = 99
+        Height = 25
+        Caption = 'Desmarcar Todas'
+        TabOrder = 1
+        OnClick = btnDesmarcarTodasClick
+      end
+      object scrlbxDelphiVersion: TScrollBox
         Left = 6
         Top = 104
         Width = 539
@@ -1051,28 +1069,9 @@ object frmPrincipal: TfrmPrincipal
         Font.Height = -16
         Font.Name = 'Tahoma'
         Font.Style = []
-        ItemHeight = 19
+        ParentColor = False
         ParentFont = False
-        TabOrder = 0
-        OnClick = clbDelphiVersionClick
-      end
-      object btnMarcarTodas: TButton
-        Left = 6
-        Top = 73
-        Width = 99
-        Height = 25
-        Caption = 'Marcar Todas'
-        TabOrder = 1
-        OnClick = btnMarcarTodasClick
-      end
-      object btnDesmarcarTodas: TButton
-        Left = 118
-        Top = 73
-        Width = 99
-        Height = 25
-        Caption = 'Desmarcar Todas'
         TabOrder = 2
-        OnClick = btnDesmarcarTodasClick
       end
     end
     object wizPgConfiguracao: TJvWizardInteriorPage

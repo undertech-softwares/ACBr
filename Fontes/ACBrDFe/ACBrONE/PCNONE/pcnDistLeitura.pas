@@ -56,6 +56,8 @@ type
     FCNPJOper: String;
     FcEQP: String;
     FcUF: Integer;
+    FindCompRet: TIndicador;
+    FindResumo: TIndicador;
 
   public
     constructor Create;
@@ -64,16 +66,18 @@ type
     function GerarXML: boolean;
     function ObterNomeArquivo: string;
 
-    property Gerador: TGerador       read FGerador  write FGerador;
-    property versao: String          read Fversao   write Fversao;
-    property tpAmb: TpcnTipoAmbiente read FtpAmb    write FtpAmb;
-    property verAplic: String        read FverAplic write FverAplic;
-    property tpDist: TtpDist         read FtpDist    write FtpDist;
-    property ultNSU: String          read FultNSU   write FultNSU;
-    property NSUFin: String          read FNSUFin   write FNSUFin;
-    property CNPJOper: String        read FCNPJOper  write FCNPJOper;
-    property cEQP: String            read FcEQP      write FcEQP;
-    property cUF: Integer            read FcUF       write FcUF;
+    property Gerador: TGerador       read FGerador    write FGerador;
+    property versao: String          read Fversao     write Fversao;
+    property tpAmb: TpcnTipoAmbiente read FtpAmb      write FtpAmb;
+    property verAplic: String        read FverAplic   write FverAplic;
+    property tpDist: TtpDist         read FtpDist     write FtpDist;
+    property ultNSU: String          read FultNSU     write FultNSU;
+    property NSUFin: String          read FNSUFin     write FNSUFin;
+    property CNPJOper: String        read FCNPJOper   write FCNPJOper;
+    property cEQP: String            read FcEQP       write FcEQP;
+    property cUF: Integer            read FcUF        write FcUF;
+    property indCompRet: TIndicador  read FindCompRet write FindCompRet;
+    property indResumo: TIndicador   read FindResumo  write FindResumo;
   end;
 
 implementation
@@ -143,6 +147,12 @@ begin
     tdUFCaptura:
       Gerador.wCampo(tcInt, 'CP10', 'cUF', 01, 02, 1, FcUF, DSC_cUF);
   end;
+
+  if FindCompRet = tiSim  then
+    Gerador.wCampo(tcStr, 'CP11', 'indCompRet', 1, 1, 1, '1', '');
+
+  if FindResumo = tiSim  then
+    Gerador.wCampo(tcStr, 'CP11', 'indResumo', 1, 1, 1, '1', '');
 
   Gerador.wGrupo('/oneDistLeitura');
 

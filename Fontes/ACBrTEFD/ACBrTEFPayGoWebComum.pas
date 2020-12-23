@@ -571,7 +571,10 @@ type
     fExibicaoQRCode: TACBrTEFPGWebAPIExibicaoQRCode;
     fImprimeViaClienteReduzida: Boolean;
     fInicializada: Boolean;
+    fCarregada: Boolean;
     fEmTransacao: Boolean;
+    fPerguntarCartaoDigitadoAposCancelarLeitura: Boolean;
+    fUsouPinPad: Boolean;
     fNomeAplicacao: String;
     fNomeEstabelecimento: String;
     fOnAguardaPinPad: TACBrTEFPGWebAPIAguardaPinPad;
@@ -741,6 +744,7 @@ type
 
     property PathLib: String read fPathLib write SetPathLib;
     property DiretorioTrabalho: String read fDiretorioTrabalho write SetDiretorioTrabalho;
+    property Carregada: Boolean read fCarregada;
     property Inicializada: Boolean read fInicializada write SetInicializada;
 
     property EmTransacao: Boolean read fEmTransacao;
@@ -773,8 +777,13 @@ type
     property ExibicaoQRCode: TACBrTEFPGWebAPIExibicaoQRCode read fExibicaoQRCode
       write fExibicaoQRCode;
 
-    property ConfirmarTransacoesPendentesNoHost: Boolean read fConfirmarTransacoesPendentesNoHost
+    property ConfirmarTransacoesPendentesNoHost: Boolean
+      read fConfirmarTransacoesPendentesNoHost
       write fConfirmarTransacoesPendentesNoHost;
+    property PerguntarCartaoDigitadoAposCancelarLeitura: Boolean
+      read fPerguntarCartaoDigitadoAposCancelarLeitura
+      write fPerguntarCartaoDigitadoAposCancelarLeitura;
+
     property OnGravarLog: TACBrGravarLog read fOnGravarLog write fOnGravarLog;
     property OnExibeMenu: TACBrTEFPGWebAPIExibeMenu read fOnExibeMenu
       write fOnExibeMenu;
@@ -1114,12 +1123,14 @@ begin
   fSuportaViasDiferenciadas := True;
   fImprimeViaClienteReduzida := False;
   fUtilizaSaldoTotalVoucher := False;
-  fRemocaoCartaoPinPad := True;
+  fRemocaoCartaoPinPad := False;
   fExibeMensagemCheckout := True;
   fExibicaoQRCode := qreAuto;
   fInicializada := False;
+  fCarregada := False;
   fDiretorioTrabalho := '';
   fEmTransacao := False;
+  fUsouPinPad := False;
   fTempoTarefasAutomaticas := '';
   fUltimoQRCode := '';
 
@@ -1132,6 +1143,7 @@ begin
   fPortaTCP := '';
   fPortaPinPad := 0;
   fConfirmarTransacoesPendentesNoHost := True;
+  fPerguntarCartaoDigitadoAposCancelarLeitura := False;
 
   fDadosTransacao := TACBrTEFPGWebAPIParametros.Create;
   fParametrosAdicionais := TACBrTEFPGWebAPIParametros.Create;
@@ -1417,6 +1429,8 @@ begin
     For i := 0 to ParametrosAdicionais.Count-1 do
       AdicionarParametro(ParametrosAdicionais[i]);
 
+    ParametrosAdicionais.Clear;  // Limpa para não usar nas próximas transações
+
     if Assigned(ParametrosAdicionaisTransacao) then
     begin
       For i := 0 to ParametrosAdicionaisTransacao.Count-1 do
@@ -1477,6 +1491,7 @@ var
 begin
   GravarLog('TACBrTEFPGWebAPI.ExecutarTransacao');
   fUltimoQRCode := '';
+  fUsouPinPad := False;
   iRet := PWRET_CANCEL;
   try
     try
@@ -1865,7 +1880,12 @@ begin
             iRet := ObterDadoCodBarra(AGetData);
           PWDAT_PPREMCRD:
           begin
-            ExibirMensagem(sInfoRemovaCartao);
+            if fUsouPinPad then
+            begin
+              ExibirMensagem(sInfoRemovaCartao);
+              fUsouPinPad := False;
+            end;
+
             iRet := RealizarOperacaoPinPad(AGetData, ppRemoveCard);
           end;
           PWDAT_PPGENCMD:
@@ -2108,7 +2128,8 @@ begin
   else  // 0 ou 3
     begin
       iRet := RealizarOperacaoPinPad(AGetData, ppGetCard);
-      ObterDigitado := (iRet = PWRET_CANCEL) or (iRet = PWRET_FALLBACK);
+      ObterDigitado := (iRet = PWRET_FALLBACK) or
+                       (fPerguntarCartaoDigitadoAposCancelarLeitura and (iRet = PWRET_CANCEL));
     end;
   end;
 
@@ -2123,6 +2144,8 @@ function TACBrTEFPGWebAPI.RealizarOperacaoPinPad(AGetData: TPW_GetData;
 var
   iRet: SmallInt;
 begin
+  fUsouPinPad := True;
+
   iRet := PWRET_CANCEL;
   case OperacaoPinPad of
     ppGetCard:
@@ -2578,7 +2601,10 @@ begin
   fEmTransacao := AValue;
 
   if fEmTransacao then
-    fDadosTransacao.Clear
+  begin
+    fDadosTransacao.Clear;
+    fUsouPinPad := False;
+  end
   else
   begin
     AjustarTempoOcioso;
@@ -2671,7 +2697,7 @@ procedure TACBrTEFPGWebAPI.LoadLibFunctions;
   end;
 
  begin
-   if fInicializada then
+   if fCarregada then
      Exit;
 
    GravarLog('TACBrTEFPGWebAPI.LoadDLLFunctions');
@@ -2703,19 +2729,22 @@ procedure TACBrTEFPGWebAPI.LoadLibFunctions;
    PGWebFunctionDetect('PW_iPPTestKey', @xPW_iPPTestKey, False);
    PGWebFunctionDetect('PW_iWaitConfirmation', @xPW_iWaitConfirmation, False);
    PGWebFunctionDetect('PW_iGetOperationsEx', @xPW_iGetOperationsEx, False);
+
+   fCarregada := True;
 end;
 
 procedure TACBrTEFPGWebAPI.UnLoadLibFunctions;
 var
   sLibName: String;
 begin
-  if not fInicializada then
+  if not fCarregada then
     Exit;
 
   //GravarLog('TACBrTEFPGWebAPI.UnLoadDLLFunctions');
 
   sLibName := LibFullName;
   UnLoadLibrary( sLibName );
+  fCarregada := False;
   ClearMethodPointers;
 end;
 

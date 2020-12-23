@@ -852,13 +852,15 @@ inherited frlDANFeRLRetrato: TfrlDANFeRLRetrato
         HoldStyle = hsHorizontally
       end
       object rlbCodigoBarras: TRLBarcode
-        Left = 520
+        Left = 435
         Top = 5
-        Width = 132
+        Width = 298
         Height = 40
         Margins.LeftMargin = 1.000000000000000000
         Margins.RightMargin = 1.000000000000000000
         Alignment = taCenter
+        Anchors = [fkLeft, fkTop]
+        AutoSize = False
         BarcodeType = bcCode128C
       end
       object rllChaveAcesso: TRLLabel

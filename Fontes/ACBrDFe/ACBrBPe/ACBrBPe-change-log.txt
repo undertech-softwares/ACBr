@@ -45,6 +45,14 @@ Símbolo : Significado
 [*]     : Recurso modificado/melhorado
 [-]     : Correção de Bug (assim esperamos)
 
+13/11/2020
+-- ACBrBPeBilhetes --
+[*] Uso da função ObterDFeXML nos métodos Validar e VerificarAssinatura
+   Por: Italo Giurizzato Junior
+-- ACBrBPeServicos --
+[*] Correção nas URLs para recepcção do BP-e TM
+   Por: Italo Giurizzato Junior
+
 11/09/2020
 -- ACBrBPeDABPeESCPOS --
 [+] Impressão do valor do Excesso de Bagagem na impressão do Evento
